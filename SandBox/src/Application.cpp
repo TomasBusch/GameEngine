@@ -1,22 +1,27 @@
-#include <iostream>
-#include <Engine.h>
 #include <config.h>
-#include <fstream>
-#include <filesystem>
+#include <include/Engine.h>
 
-int main(int argc, char* argv[])
+class Sandbox : public Engine::Application 
 {
-	std::ofstream file;
-	
-	file.open("res/test.txt");
-	if (file.is_open()) {
-		file << "test data ";
+public:
+	Sandbox(const Engine::AppSpecs& specs)
+		: Engine::Application(specs)
+	{
 
-		std::cout << VulkanEngine::cmake::project_name << "SandBox" << returnTwo() << std::endl << std::endl;
 	}
 
-	std::cout << std::filesystem::current_path() << std::endl;
-	std::cout << argv[0] << std::endl;
+	~Sandbox() 
+	{
 
-	return 0;
+	}
+};
+
+Engine::Application* Engine::CreateApplication(Engine::AppArgs args) 
+{
+	AppSpecs specs;
+	specs.name = "Vulkan Engine";
+	specs.workDir = "./";
+	specs.cmdLineArgs = args;
+
+	return new Sandbox(specs);
 }

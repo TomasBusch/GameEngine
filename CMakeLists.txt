@@ -12,12 +12,17 @@ endif()
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Release>:Release>")
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
+
+
 project (
 	"VulkanGameEngine"
 	VERSION 0.0.1.0
 	DESCRIPTION ""
 	LANGUAGES CXX
 )
+
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build using shared libraries" FORCE)
+#set(ENTT_INCLUDE_HEADERS OFF CACHE BOOL "Include EnTT Headers" FORCE)
 
 #Setup compiler config
 add_library(cxx_setup INTERFACE)
@@ -27,6 +32,16 @@ target_compile_features(cxx_setup
     INTERFACE cxx_std_20)
 target_include_directories(cxx_setup
     INTERFACE "${PROJECT_SOURCE_DIR}/include")
+
+if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+  target_compile_definitions(cxx_setup INTERFACE COMPILER_CLANG)
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+  target_compile_definitions(cxx_setup INTERFACE COMPILER_GNU)
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
+  target_compile_definitions(cxx_setup INTERFACE COMPILER_INTEL)
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+  target_compile_definitions(cxx_setup INTERFACE COMPILER_MSVC)
+endif()
 
 #Set /cmake folder as the modules path
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
@@ -53,11 +68,15 @@ add_subdirectory("extern/filewatch")
 add_subdirectory("extern/glad")
 add_subdirectory("extern/glfw")
 add_subdirectory("extern/glm")
-#add_subdirectory("extern/imgui")
+add_subdirectory("extern/imgui")
 add_subdirectory("extern/SDL")
 add_subdirectory("extern/spdlog")
 #add_subdirectory("extern/stb")
+add_library(stb INTERFACE)
+target_include_directories(stb INTERFACE "${PROJECT_SOURCE_DIR}/extern/stb")
 add_subdirectory("extern/yaml-cpp")
+
+find_package(OpenGL REQUIRED)
 
 # Include sub-projects.
 add_subdirectory("Engine")

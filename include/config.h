@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string_view>
+
 namespace VulkanEngine::cmake {
 	inline constexpr std::string_view project_name = "VulkanGameEngine";
 	inline constexpr std::string_view project_version = "0.0.1.0";
