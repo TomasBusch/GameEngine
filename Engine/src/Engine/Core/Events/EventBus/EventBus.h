@@ -17,16 +17,25 @@ namespace Engine {
 		};
 
 	public:
+		EventBus(const EventBus& other) = delete;
+		EventBus& operator=(const EventBus& other) = delete;
+		EventBus(EventBus&& other) = delete;
+		EventBus& operator=(EventBus&& other) = delete;
+
+
 		static bool HasHandlers();
 
 		template<typename Function, typename... ArgsT>
 		static void Broadcast(Function&& func, ArgsT&&... args);
 
 		template<typename Function, typename... ArgsT>
-		static void QueueBroadcast(Function&& func, ArgsT&&... args);
+		static void QueueBroadcast(Function&& func, ArgsT&& ...args);
 
 		static void ExecuteQueue();
 	private:
+		EventBus() = default;
+		~EventBus() = default;
+
 		static void Connect(Handler* handler);
 		static void Disconnect(Handler* handler);
 		static EventBus& Get() {
@@ -45,25 +54,24 @@ namespace Engine {
 	template<typename Interface>
 	inline bool EventBus<Interface>::HasHandlers()
 	{
-		return false;
+		return !(EventBus::Get().m_Handlers.empty());
 	}
 
 	template<typename Interface>
 	template<typename Function, typename ...ArgsT>
-	inline void EventBus<Interface>::Broadcast(Function&& func, ArgsT && ...args)
+	inline void EventBus<Interface>::Broadcast(Function&& func, ArgsT&& ...args)
 	{
-		EventBus<Interface> instance = EventBus::Get();
-		for (Handler* handler : instance.m_Handlers) {
+		for (Handler* handler : EventBus::Get().m_Handlers) {
 			(handler->*func)(std::forward<ArgsT>(args)...);
 		}
 	}
 
 	template<typename Interface>
 	template<typename Function, typename ...ArgsT>
-	inline void EventBus<Interface>::QueueBroadcast(Function&& func, ArgsT && ...args)
+	inline void EventBus<Interface>::QueueBroadcast(Function&& func, ArgsT&& ...args)
 	{
-		EventBus<Interface> instance = EventBus::Get();
-		instance.m_Queue.push([func = std::forward<Function>(func), args...](Handler* handler) {
+		EventBus& instance = EventBus::Get();
+		instance.m_Queue.push([func = std::forward<Function>(func) , ...args = std::forward<ArgsT>(args)](Handler* handler) mutable {
 				(handler->*func)(std::forward<ArgsT>(args)...);
 			}
 		);
@@ -72,13 +80,12 @@ namespace Engine {
 	template<typename Interface>
 	inline void EventBus<Interface>::ExecuteQueue()
 	{
-		EventBus<Interface> instance = EventBus::Get();
-		while (!instance.m_Queue.empty()) {
-			Callback<Handler*> callback = instance.m_Queue.front();
-			for (Handler* handler : instance.m_Handlers) {
+		while (!EventBus::Get().m_Queue.empty()) {
+			Callback<Handler*> callback = EventBus::Get().m_Queue.front();
+			for (Handler* handler : EventBus::Get().m_Handlers) {
 				callback(handler);
 			}
-			instance.m_Queue.pop();
+			EventBus::Get().m_Queue.pop();
 		}
 	}
 
@@ -89,16 +96,18 @@ namespace Engine {
 		if (pos == EventBus::Get().m_Handlers.end()) {
 			EventBus::Get().m_Handlers.push_back(handler);
 		}
-		int a = 1;
 	}
 
 	template<typename Interface>
 	inline void EventBus<Interface>::Disconnect(Handler* handler)
 	{
-		EventBus<Interface> instance = EventBus::Get();
-		auto pos = std::find(instance.m_Handlers.begin(), instance.m_Handlers.end(), handler);
-		if (pos != instance.m_Handlers.end()) {
-			instance.m_Handlers.erase(pos);
+		auto pos = std::find(EventBus::Get().m_Handlers.begin(), EventBus::Get().m_Handlers.end(), handler);
+		if (pos != EventBus::Get().m_Handlers.end()) {
+			EventBus::Get().m_Handlers.erase(pos);
+		}
+		//TODO not tested
+		if (!EventBus::HasHandlers()) {
+			delete g_Instance;
 		}
 	}
 

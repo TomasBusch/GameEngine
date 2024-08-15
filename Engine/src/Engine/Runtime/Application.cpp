@@ -45,16 +45,16 @@ namespace Engine {
 
 	void Application::Run()
 	{
-		ENGINE_ASSERT(g_Application->m_Initialized, "ERROR: Application was never initialized. Remeber to call Application::Get().Init().");
+		ENGINE_ASSERT(g_Application->m_Initialized, "ERROR: Application was never initialized. Remember to call Application::Get().Init().");
 
-		GameEventBus* gbus = GameEventBus::g_Instance;
-		KeyEventBus* kbus = KeyEventBus::g_Instance;
+		//GameEventBus* gbus = GameEventBus::g_Instance;
+		//KeyEventBus* kbus = KeyEventBus::g_Instance;
 
 		GameEventHandler* ghandler = new GameEventHandler();
 		KeyEventHandler* khandler = new KeyEventHandler();
 
-		gbus = GameEventBus::g_Instance;
-		kbus = KeyEventBus::g_Instance;
+		//gbus = GameEventBus::g_Instance;
+		//kbus = KeyEventBus::g_Instance;
 
 		GameEvent ge = GameEvent();
 		ge.data = 2;
@@ -64,8 +64,16 @@ namespace Engine {
 		GameEventBus::Broadcast(&IGameEvent::OnGameEvent, ge);
 		KeyEventBus::Broadcast(&IKeyEvent::OnKeyEvent, ke);
 
-		gbus = GameEventBus::g_Instance;
-		kbus = KeyEventBus::g_Instance;
+		GameEventBus::QueueBroadcast(&IGameEvent::OnGameEvent, ge);
+		KeyEventBus::QueueBroadcast(&IKeyEvent::OnKeyEvent, ke);
+
+		//gbus = GameEventBus::g_Instance;
+		//kbus = KeyEventBus::g_Instance;
+
+		GameEventBus::ExecuteQueue();
+		KeyEventBus::ExecuteQueue();
+
+		delete ghandler;
 
 		Scope<ImGuiContext> ImGui = ImGuiContext::Create(m_Window.get());
 		ImGui->Init("#version 150");
