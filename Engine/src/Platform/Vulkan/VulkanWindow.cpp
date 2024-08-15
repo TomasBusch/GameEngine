@@ -5,7 +5,7 @@
 #include <GLFW/glfw3.h>
 #include <glad/vulkan.h>
 
-Engine::VulkanWindow::VulkanWindow(WindowParams& params)
+Engine::VulkanWindow::VulkanWindow(Window::Params& params)
 	:m_Width(params.width), m_Height(params.height), m_WindowHandle(nullptr), VK_Instance(nullptr)
 {
 

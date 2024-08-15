@@ -4,8 +4,8 @@
 #include <GLFW/glfw3.h>
 #include <glad/gl.h>
 
-Engine::OpenGLWindow::OpenGLWindow(WindowParams& params)
-	:m_Width(params.width), m_Height(params.height), m_WindowHandle(nullptr)
+Engine::OpenGLWindow::OpenGLWindow(Window::Params& params)
+	:m_Width(params.width), m_Height(params.height), m_WindowHandle(nullptr), Window(params)
 {
 
 }
@@ -22,11 +22,14 @@ void Engine::OpenGLWindow::Init()
 	glfwWindowHint(GLFW_REFRESH_RATE, GLFW_DONT_CARE);
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
 
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+
 
 	if (!glfwInit())
 		return;
 
-	m_WindowHandle = glfwCreateWindow(640, 480, "OpenGL Window", NULL, NULL);
+	m_WindowHandle = glfwCreateWindow(m_Width, m_Height, "OpenGL Window", NULL, NULL);
 	if (!m_WindowHandle)
 	{
 		glfwTerminate();
@@ -37,10 +40,6 @@ void Engine::OpenGLWindow::Init()
 
 	gladLoadGL(glfwGetProcAddress);
 }
-
-
-
-
 
 void Engine::OpenGLWindow::OnUpdate()
 {
@@ -70,7 +69,7 @@ uint32_t Engine::OpenGLWindow::GetHeight()
 	return m_Height;
 }
 
-GLFWwindow* Engine::OpenGLWindow::GetNativeHandle()
+void* Engine::OpenGLWindow::getNativeHandle()
 {
 	return m_WindowHandle;
 }

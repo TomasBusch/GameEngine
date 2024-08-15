@@ -1,0 +1,18 @@
+#include "KeyboardDevice.h"
+
+#include "GLFW/glfw3.h"
+#include "Platform/OpenGL/OpenGLWindow.h"
+
+bool Engine::Input::KeyboardDevice::isKeyPressed(const Keycode key)
+{
+	auto* window = static_cast<GLFWwindow*>(Application::Get().GetWindow()->getNativeHandle());
+
+	return glfwGetKey(window, key) == GLFW_PRESS;
+}
+
+bool Engine::Input::KeyboardDevice::isKeyReleased(const Keycode key)
+{
+	auto* window = static_cast<GLFWwindow*>(Application::Get().GetWindow()->getNativeHandle());
+
+	return glfwGetKey(window, key) == GLFW_RELEASE;
+}

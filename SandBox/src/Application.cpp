@@ -1,10 +1,10 @@
 #include <config.h>
-#include <include/Engine.h>
+#include <Engine.h>
 
 class Sandbox : public Engine::Application 
 {
 public:
-	Sandbox(const Engine::AppSpecs& specs)
+	Sandbox(const Engine::Application::Specs& specs)
 		: Engine::Application(specs)
 	{
 
@@ -16,9 +16,9 @@ public:
 	}
 };
 
-Engine::Application* Engine::CreateApplication(Engine::AppArgs args) 
+Engine::Application* Engine::CreateApplication(Engine::Application::Args args) 
 {
-	AppSpecs specs;
+	Application::Specs specs;
 	specs.name = "Vulkan Engine";
 	specs.workDir = "./";
 	specs.cmdLineArgs = args;

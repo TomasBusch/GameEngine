@@ -7,7 +7,7 @@ namespace Engine {
 	class OpenGLWindow : public Window {
 	public:
 		OpenGLWindow() = delete;
-		OpenGLWindow(WindowParams& params);
+		OpenGLWindow(Window::Params& params);
 		virtual ~OpenGLWindow();
 
 		virtual void Init() override;
@@ -18,7 +18,7 @@ namespace Engine {
 		virtual std::uint32_t GetWidth() override;
 		virtual std::uint32_t GetHeight() override;
 
-		GLFWwindow* GetNativeHandle();
+		virtual void* getNativeHandle() override;
 	private:
 		GLFWwindow* m_WindowHandle;
 

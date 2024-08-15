@@ -9,7 +9,7 @@ namespace Engine {
 	class VulkanWindow : public Window {
 	public:
 		VulkanWindow() = delete;
-		VulkanWindow(WindowParams& params);
+		VulkanWindow(Window::Params& params);
 		virtual ~VulkanWindow();
 
 		virtual void Init() override;

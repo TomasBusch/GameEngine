@@ -1,6 +1,10 @@
 #pragma once
 
 #include <iostream>
+#include <ostream>
+#include <istream>
+
+#include <mutex>
 
 #include <memory>
 
@@ -15,8 +19,9 @@
 #include <array>
 #include <vector>
 #include <stack>
+#include <queue>
+#include <map>
 #include <unordered_map>
 #include <unordered_set>
 
-#include "Core/Definitions/BuildDLL.h"
-#include "Core/Definitions/Memory.h"
+#include "Engine/Core/Base.h"
