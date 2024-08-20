@@ -1,7 +1,7 @@
-#include "Engine/Core/Base.h"
+#include "Engine/Core/Base.hpp"
 
-#include "ImGuiContext.h"
-#include "OpenGL/ImGuiOpenGLContext.h"
+#include "ImGuiContext.hpp"
+#include "OpenGL/ImGuiOpenGLContext.hpp"
 
 namespace Engine {
 

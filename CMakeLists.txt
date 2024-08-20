@@ -47,7 +47,7 @@ endif()
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
 #Setup generation of global project variables in c++
-configure_file("config.h.in" "${PROJECT_SOURCE_DIR}/include/config.h" ESCAPE_QUOTES)
+configure_file("config.hpp.in" "${PROJECT_SOURCE_DIR}/include/config.hpp" ESCAPE_QUOTES)
 
 #Auto-pull submodules
 find_package(Git QUIET)

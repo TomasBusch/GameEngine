@@ -1,5 +1,5 @@
-#include <config.h>
-#include <Engine.h>
+#include <config.hpp>
+#include <Engine.hpp>
 
 class Sandbox : public Engine::Application 
 {

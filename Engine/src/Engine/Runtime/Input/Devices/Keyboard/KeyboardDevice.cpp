@@ -1,7 +1,8 @@
-#include "KeyboardDevice.h"
+#include "KeyboardDevice.hpp"
 
-#include "GLFW/glfw3.h"
-#include "Platform/OpenGL/OpenGLWindow.h"
+#include "Platform/OpenGL/OpenGLWindow.hpp"
+
+#include <GLFW/glfw3.h>
 
 bool Engine::Input::KeyboardDevice::isKeyPressed(const Keycode key)
 {

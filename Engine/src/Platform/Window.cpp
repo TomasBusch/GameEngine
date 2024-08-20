@@ -1,8 +1,8 @@
-#include "Engine/Core/Base.h"
+#include "Engine/Core/Base.hpp"
 
-#include "Platform/Window.h"
-#include "Platform/OpenGL/OpenGLWindow.h"
-#include "Engine/RenderAPI/RenderAPI.h"
+#include "Platform/Window.hpp"
+#include "Platform/OpenGL/OpenGLWindow.hpp"
+#include "Engine/RenderAPI/RenderAPI.hpp"
 
 
 namespace Engine {

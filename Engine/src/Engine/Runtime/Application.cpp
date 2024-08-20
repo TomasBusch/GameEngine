@@ -1,8 +1,8 @@
-#include "Engine/Core/Base.h"
+#include "Engine/Core/Base.hpp"
 
-#include "Application.h"
+#include "Application.hpp"
 
-#include "Engine/Runtime/ImGui/ImGuiContext.h"
+#include "Engine/Runtime/ImGui/ImGuiContext.hpp"
 
 namespace Engine {
 
@@ -47,9 +47,11 @@ namespace Engine {
 	{
 		ENGINE_ASSERT(g_Application->m_Initialized, "ERROR: Application was never initialized. Remember to call Application::Get().Init().");
 
+		Input::InputModule::GetInstance()->Init(m_Window.get());
+
 		Scope<ImGuiContext> ImGui = ImGuiContext::Create(m_Window.get());
 		ImGui->Init("#version 150");
-		while (!m_Window->ShouldClose())
+		while (m_Running)
 		{
 			m_Window->OnUpdate();
 			ImGui->Render();
@@ -57,4 +59,44 @@ namespace Engine {
 
 		m_Window->Shutdown();
 	};
+
+	void Application::OnKeyEvent(Input::KeyEvent e)
+	{
+
+	}
+
+	void Application::OnTextEvent(Input::TextEvent e)
+	{
+
+	}
+
+	void Application::OnMouseScrollEvent(Input::MouseScrollEvent e)
+	{
+
+	}
+
+	void Application::OnWindowFocusEvent(WindowFocusEvent e)
+	{
+		m_Focused = e.Focused;
+	}
+
+	void Application::OnMouseCursorEvent(Input::MouseCursorEvent e)
+	{
+
+	}
+
+	void Application::OnMouseButtonEvent(Input::MouseButtonEvent e)
+	{
+
+	}
+
+	void Application::OnWindowMaximizeEvent(WindowMaximizeEvent e) 
+	{
+		m_Minimized = !e.Maximized;
+	}
+
+	void Application::OnWindowCloseEvent(WindowCloseEvent e)
+	{
+		m_Running = false;
+	}
 }

@@ -1,6 +1,6 @@
-#include "VulkanWindow.h"
+#include "VulkanWindow.hpp"
 
-#include "config.h"
+#include "config.hpp"
 
 #include <GLFW/glfw3.h>
 #include <glad/vulkan.h>
