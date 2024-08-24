@@ -51,16 +51,16 @@ void Engine::ImGuiOpenGLContext::Init(const std::string& glsl_version)
     ImGui_ImplOpenGL3_Init(glsl_version.c_str());
 }
 
-void Engine::ImGuiOpenGLContext::Render() {
+void Engine::ImGuiOpenGLContext::BeginFrame()
+{
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
+}
 
-    bool show_demo_window = true;
-    ImGui::ShowDemoWindow(&show_demo_window);
-
+void Engine::ImGuiOpenGLContext::EndFrame()
+{
     ImGui::Render();
-
 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -72,3 +72,10 @@ void Engine::ImGuiOpenGLContext::Render() {
         glfwMakeContextCurrent(backup_current_context);
     }
 }
+
+//void Engine::ImGuiOpenGLContext::Render(Callback<> cb) {
+//
+//
+//    cb();
+//
+//}

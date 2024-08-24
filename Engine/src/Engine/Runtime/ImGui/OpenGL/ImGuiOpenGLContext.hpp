@@ -4,8 +4,8 @@
 
 #include "Engine/Core/Base.hpp"
 
-#include "Engine/Runtime/ImGui/ImGuiContext.hpp"
 #include "Platform/Window.hpp"
+#include "Engine/Runtime/ImGui/ImGuiContext.hpp"
 
 namespace Engine {
 
@@ -15,7 +15,9 @@ namespace Engine {
 		~ImGuiOpenGLContext();
 
 		virtual void Init(const std::string& glsl_version) override;
-		virtual void Render() override;
+		virtual void BeginFrame() override;
+		virtual void EndFrame() override;
+		//virtual void Render(Callback<> cb) override;
 	private:
 		struct ImguiData; Scope<ImguiData> m_ImGuiData;
 		Window* m_Window;

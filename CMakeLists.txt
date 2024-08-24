@@ -1,7 +1,7 @@
 ﻿# CMakeList.txt : Top-level CMake project file, do global configuration
 # and include sub-projects here.
 #
-cmake_minimum_required (VERSION 3.21)
+cmake_minimum_required (VERSION 3.25)
 
 # Enable Hot Reload for MSVC compilers if supported.
 if (POLICY CMP0141)
@@ -12,7 +12,7 @@ endif()
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Release>:Release>")
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
-
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 project (
 	"VulkanGameEngine"
@@ -22,6 +22,32 @@ project (
 )
 
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build using shared libraries" FORCE)
+
+set(SHADERC_SKIP_TESTS ON CACHE BOOL "Enable test for shaderc" FORCE)
+set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "Enable test" FORCE)
+set(GLFW_BUILD_TESTS OFF CACHE BOOL "Enable test" FORCE)
+set(GLM_BUILD_TESTS OFF CACHE BOOL "Enable test" FORCE)
+set(GLSLANG_TESTS OFF CACHE BOOL "Enable test" FORCE)
+set(SDL_TESTS OFF CACHE BOOL "Enable test" FORCE)
+set(SHADERC_ENABLE_TESTS OFF CACHE BOOL "Enable test" FORCE)
+set(SPDLOG_BUILD_TESTS OFF CACHE BOOL "Enable test" FORCE)
+set(SPDLOG_BUILD_TESTS_HO OFF CACHE BOOL "Enable test" FORCE)
+set(SPIRV_CROSS_ENABLE_TESTS OFF CACHE BOOL "Enable test" FORCE)
+set(SPIRV_HEADERS_ENABLE_TESTS OFF CACHE BOOL "Enable test" FORCE)
+set(SPIRV_SKIP_TESTS ON CACHE BOOL "Enable test" FORCE)
+set(gmock_build_tests OFF CACHE BOOL "Enable test" FORCE)
+set(gtest_build_tests OFF CACHE BOOL "Enable test" FORCE)
+
+
+set(SPIRV_CROSS_STATIC ON CACHE BOOL "Build SPIRV-Cross as static" FORCE)
+set(SPIRV_CROSS_SKIP_INSTALL ON CACHE BOOL "Skip SPIRV-Cross Installation" FORCE)
+set(SPIRV_CROSS_ENABLE_CPP ON CACHE BOOL "Build cpp module of SPIRV-Cross" FORCE)
+set(SPIRV_CROSS_ENABLE_GLSL ON CACHE BOOL "Build GLSL module of SPIRV-Cross" FORCE)
+set(SPIRV_CROSS_ENABLE_MSL ON CACHE BOOL "Build MSL module of SPIRV-Cross" FORCE)
+set(SPIRV_CROSS_ENABLE_HLSL ON CACHE BOOL "Build HLSL module of SPIRV-Cross" FORCE)
+set(SPIRV_CROSS_ENABLE_REFLECT ON CACHE BOOL "Build reflect module of SPIRV-Cross" FORCE)
+set(SPIRV_CROSS_ENABLE_UTIL ON CACHE BOOL "Build util module of SPIRV-Cross" FORCE)
+
 #set(ENTT_INCLUDE_HEADERS OFF CACHE BOOL "Include EnTT Headers" FORCE)
 
 #Setup compiler config
@@ -61,22 +87,59 @@ if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
     endif()
 endif()
 
+#TODO Execute utils/git-sync-deps with python to complete the shaderc install
+
+
 #include external projects
 add_subdirectory("extern/assimp")
+set_target_properties(assimp UpdateAssimpLibsDebugSymbolsAndDLLs uninstall PROPERTIES FOLDER extern)
 add_subdirectory("extern/entt")
+set_target_properties(EnTT PROPERTIES FOLDER extern)
 add_subdirectory("extern/filewatch")
+set_target_properties(filewatch_unit PROPERTIES FOLDER extern)
 add_subdirectory("extern/glad")
+set_target_properties(glad PROPERTIES FOLDER extern)
 add_subdirectory("extern/glfw")
+set_target_properties(glfw PROPERTIES FOLDER extern)
 add_subdirectory("extern/glm")
+set_target_properties(glm glm-header-only PROPERTIES FOLDER extern)
 add_subdirectory("extern/imgui")
+set_target_properties(imgui imgui_header PROPERTIES FOLDER extern)
 add_subdirectory("extern/SDL")
+set_target_properties(SDL3_test SDL3-static PROPERTIES FOLDER extern)
 add_subdirectory("extern/spdlog")
+set_target_properties(spdlog PROPERTIES FOLDER extern)
 #add_subdirectory("extern/stb")
+add_subdirectory("extern/shaderc")
+set_target_properties(testdata shaderc shaderc-online-compile shaderc_shared shaderc_util add-copyright check-copyright build-version glslc glslc_exe shaderc_combined shaderc_combined-pkg-config shaderc_static-pkg-config shaderc-pkg-config PROPERTIES FOLDER extern)
+add_subdirectory("extern/SPIRV-Cross")
+set_target_properties(spirv-cross spirv-cross-c spirv-cross-core spirv-cross-cpp spirv-cross-glsl spirv-cross-hlsl spirv-cross-msl spirv-cross-reflect spirv-cross-util core_tables enum_string_mapping extinst_tables spirv-tools-pkg-config PROPERTIES FOLDER extern)
 add_library(stb INTERFACE)
 target_include_directories(stb INTERFACE "${PROJECT_SOURCE_DIR}/extern/stb")
 add_subdirectory("extern/yaml-cpp")
+set_target_properties(yaml-cpp yaml-cpp-parse yaml-cpp-read yaml-cpp-sandbox PROPERTIES FOLDER extern)
+
+set_target_properties(zlibstatic PROPERTIES FOLDER extern)
 
 find_package(OpenGL REQUIRED)
+
+#Select Vulkan Components
+set(VULKAN_COMPONENTS
+	"glslc"
+	"glslangValidator"
+	"glslang"
+	"shaderc_combined"
+	"SPIRV-Tools"
+	"dxc"
+)
+
+#Find Vulkan
+find_package(Vulkan REQUIRED COMPONENTS "${VULKAN_COMPONENTS}")
+if(NOT Vulkan_FOUND)
+	message(FATAL_ERROR "Vulkan SDK could not be found, make sure that the SDK is installed!")
+else()
+	message(STATUS "Vulkan: Version ${Vulkan_VERSION}")
+endif()
 
 # Include sub-projects.
 add_subdirectory("Engine")

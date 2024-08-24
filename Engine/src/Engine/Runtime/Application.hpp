@@ -4,11 +4,15 @@
 #include "Engine/Core/Base.hpp"
 
 #include "Platform/Window.hpp"
-#include "Engine/Runtime/Systems/Scene/Scene.hpp"
+#include "Engine/Runtime/ImGui/ImGuiContext.hpp"
+
+#include "Engine/Runtime/Scene/Scene.hpp"
 
 #include "Engine/Core/Events/Event.hpp"
 #include "Engine/Core/Events/InputEvents.hpp"
 #include "Engine/Runtime/Input/InputModule.hpp"
+
+
 
 int main(int argc, char* argv[]);
 
@@ -41,6 +45,10 @@ namespace Engine {
 		void Init();
 		void Run();
 		void Shutdown();
+	protected:
+		virtual void OnInit() {};
+
+		virtual void ImGuiRender() {};
 
 		virtual void OnKeyEvent(Input::KeyEvent e) override;
 
@@ -68,6 +76,7 @@ namespace Engine {
 		bool m_Focused = true;
 
 		Scope<Engine::Window> m_Window = nullptr;
+		Scope<ImGuiContext> m_ImGuiContext = nullptr;
 
 		//std::stack<Scene> m_Scenes;
 

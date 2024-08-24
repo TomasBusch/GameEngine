@@ -10,3 +10,14 @@ target_include_directories(Editor
                            )
 set_target_properties(Editor PROPERTIES 
     VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}")
+
+set(EDITOR_RESOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/res")
+set(EDITOR_OUTPUT_RESOURCE_DIR "${CMAKE_CURRENT_BINARY_DIR}/res")
+
+add_custom_command(
+    TARGET Editor POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${EDITOR_RESOURCE_DIR}
+        ${EDITOR_OUTPUT_RESOURCE_DIR}
+    COMMENT "Copying resources to build directory"
+)

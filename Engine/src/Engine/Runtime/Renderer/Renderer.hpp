@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Runtime/Systems/Scene/Scene.hpp"
+#include "Engine/Runtime/Scene/Scene.hpp"
 
 namespace Engine {
 	class Renderer {

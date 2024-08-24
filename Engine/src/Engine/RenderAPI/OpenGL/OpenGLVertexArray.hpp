@@ -1,13 +1,49 @@
 #pragma once
 #include "pch.hpp"
 
-#include "Engine/RenderAPI/VertexArray.hpp"
+#include "OpenGLBuffer.hpp"
 
 namespace Engine::RenderAPI {
-	class OpenGLVertexArray : public VertexArray {
+
+	enum class VertexDataType : std::uint8_t {
+		BYTE,
+		U_BYTE,
+		SHORT,
+		U_SHORT,
+		INT,
+		U_INT,
+		HALF_FLOAT,
+		FLOAT,
+		DOUBLE,
+		FIXED
+	};
+
+	struct VertexAttribLayoutElement {
+		VertexDataType type;
+		std::size_t offset;
+		std::uint8_t count;
+		std::byte normalized;
+
+		VertexAttribLayoutElement(VertexDataType t, std::uint32_t c, std::size_t s, std::byte n, std::size_t o)
+			:type(t), count(c), normalized(n), offset(o)
+		{}
+	};
+
+	struct VertexAttribLayout {
+		std::vector<VertexAttribLayoutElement> elements;
+		std::size_t stride;
+
+		VertexAttribLayout(std::vector<VertexAttribLayoutElement> e, std::size_t s)
+			:elements(e), stride(s)
+		{}
+	};
+
+	class OpenGLVertexArray {
 	public:
 		OpenGLVertexArray();
-		virtual ~OpenGLVertexArray();
+		~OpenGLVertexArray();
+
+		void BindBuffer(OpenGLBuffer& vbo, VertexAttribLayout& layout);
 	private:
 		glm::uint32 m_RenderID;
 	};

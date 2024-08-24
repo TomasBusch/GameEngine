@@ -1,9 +1,9 @@
 #pragma once
-#include "pch.h"
+#include "pch.hpp"
 
 #include "glm/glm.hpp"
 
-#include "Mesh.h"
+#include "Mesh.hpp"
 
 namespace Engine {
 	class Model {

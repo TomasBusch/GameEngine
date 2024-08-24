@@ -1,13 +1,16 @@
 #include <config.hpp>
 #include <Engine.hpp>
 
+#include <filesystem>
+
 class Sandbox : public Engine::Application 
 {
 public:
 	Sandbox(const Engine::Application::Specs& specs)
 		: Engine::Application(specs)
 	{
-
+		std::filesystem::path cwd = std::filesystem::current_path();
+		std::cout << cwd << std::endl;
 	}
 
 	~Sandbox() 

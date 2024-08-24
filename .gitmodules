@@ -28,3 +28,9 @@
 [submodule "extern/stb/stb"]
 	path = extern/stb/stb
 	url = https://github.com/nothings/stb.git
+[submodule "extern/SPIRV-Cross"]
+	path = extern/SPIRV-Cross
+	url = https://github.com/KhronosGroup/SPIRV-Cross.git
+[submodule "extern/shaderc"]
+	path = extern/shaderc
+	url = https://github.com/google/shaderc.git

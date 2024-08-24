@@ -12,5 +12,7 @@ target_sources(imgui INTERFACE
 				"imgui/misc/fonts/binary_to_compressed_c.cpp"
 )
 #target_link_libraries(imgui PRIVATE glfw ${OPENGL_LIBRARY})
+add_library(imgui_header INTERFACE)
+target_include_directories(imgui_header INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/imgui")
 
 

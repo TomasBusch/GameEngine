@@ -1,0 +1,20 @@
+{
+  "version": "0.2.1",
+  "defaults": {},
+  "configurations": [
+    {
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "SandBox.exe (SandBox\\SandBox.exe)",
+      "name": "SandBox.exe (SandBox\\SandBox.exe)",
+      "currentDir": "${workspaceRoot}\\SandBox"
+    },
+    {
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "Editor.exe (Editor\\Editor.exe)",
+      "name": "Editor.exe (Editor\\Editor.exe)",
+      "currentDir": "${workspaceRoot}\\Editor"
+    }
+  ]
+}

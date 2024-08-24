@@ -15,5 +15,10 @@ namespace Engine::RenderAPI {
 		glDeleteVertexArrays(1, &m_RenderID);
 	}
 
+	void OpenGLVertexArray::BindBuffer(OpenGLBuffer& vbo, VertexAttribLayout& layout)
+	{
+
+	}
+
 }
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ShaderGraph.h"
-#include "Texture.h"
+#include "ShaderGraph.hpp"
+#include "Texture.hpp"
 
 namespace Engine {
 	class Material {

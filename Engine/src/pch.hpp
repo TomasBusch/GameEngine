@@ -27,6 +27,8 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include <filesystem>
+
 #include <glm/glm.hpp>
 
 #include "Engine/Core/Base.hpp"

@@ -15,6 +15,8 @@
 			"src/Engine/Core/Events/EventQueue.hpp" 
 			"src/Engine/Core/Events/Publisher.hpp" "src/Engine/Core/Events/Subscriber.hpp" 
 			"src/Engine/Core/Events/InputEvents.hpp" 
+			"src/Engine/Core/Events/WindowEvents.hpp" 
+			"src/Engine/Core/Events/EventBus/EventBus.hpp" 
 #-----------Platform: /-----------------------------------------------------------------------------------------------------------------------------------
 			"src/Platform/Window.hpp" "src/Platform/Window.cpp" 
 			"src/Platform/OpenGL/OpenGLWindow.cpp" "src/Platform/OpenGL/OpenGLWindow.hpp" 
@@ -29,35 +31,40 @@
 			"src/Engine/Runtime/Input/Devices/Keyboard/KeyboardDevice.hpp" "src/Engine/Runtime/Input/Devices/Keyboard/KeyboardDevice.cpp" 
 			"src/Engine/Runtime/Input/Devices/Mouse/MouseDevice.hpp" "src/Engine/Runtime/Input/Devices/Mouse/MouseDevice.cpp" 
 			"src/Engine/Runtime/Input/InputModule.hpp" "src/Engine/Runtime/Input/InputModule.cpp" 
-#-----------Systems: /------------------------------------------------------------------------------------------------------------------------------------
-			"src/Engine/Runtime/Systems/Scene/entity.hpp" "src/Engine/Runtime/Systems/Scene/entity.cpp" 
-			"src/Engine/Runtime/Systems/Scene/Scene.cpp" "src/Engine/Runtime/Systems/Scene/Scene.hpp" 
-			"src/Engine/Runtime/Systems/Scene/Components/MeshComponent.hpp" 
-			"src/Engine/Runtime/Systems/Scene/Components/TagComponent.hpp" 
-			"src/Engine/Runtime/Systems/Scene/Components/TransformComponent.hpp" 
-			"src/Engine/Runtime/Systems/Renderer/Renderer.hpp" "src/Engine/Runtime/Systems/Renderer/Renderer.cpp" 
-			"src/Engine/Runtime/Systems/Renderer/RenderPass.hpp" 
-			"src/Engine/Runtime/Systems/Renderer/PostProcess.hpp" 
-			"src/Engine/Runtime/Systems/Renderer/Mesh.hpp" 
-			"src/Engine/Runtime/Systems/Renderer/Model.hpp" 
-			"src/Engine/Runtime/Systems/Renderer/Material.hpp" 
-			"src/Engine/Runtime/Systems/Renderer/Image.hpp" 
-			"src/Engine/Runtime/Systems/Renderer/Texture.hpp" 
-			"src/Engine/Runtime/Systems/Renderer/ShaderGraph.hpp" 
+			"src/Engine/Runtime/Resources/ShaderModule.cpp" 
+#-----------Scene: /--------------------------------------------------------------------------------------------------------------------------------------
+			"src/Engine/Runtime/Scene/entity.hpp" "src/Engine/Runtime/Scene/entity.cpp" 
+			"src/Engine/Runtime/Scene/Scene.cpp" "src/Engine/Runtime/Scene/Scene.hpp" 
+			"src/Engine/Runtime/Scene/Components/MeshComponent.hpp" 
+			"src/Engine/Runtime/Scene/Components/TagComponent.hpp" 
+			"src/Engine/Runtime/Scene/Components/TransformComponent.hpp" 
+#-----------Renderer: /-----------------------------------------------------------------------------------------------------------------------------------
+			"src/Engine/Runtime/Renderer/Renderer.hpp" "src/Engine/Runtime/Renderer/Renderer.cpp" 
+			"src/Engine/Runtime/Renderer/RenderPass.hpp" 
+			"src/Engine/Runtime/Renderer/PostProcess.hpp" 
+			"src/Engine/Runtime/Renderer/Mesh.hpp" 
+			"src/Engine/Runtime/Renderer/Model.hpp" 
+			"src/Engine/Runtime/Renderer/Material.hpp" 
+			"src/Engine/Runtime/Renderer/Image.hpp" 
+			"src/Engine/Runtime/Renderer/Texture.hpp" 
+			"src/Engine/Runtime/Renderer/ShaderGraph.hpp" 
 #-----------RenderAPI: /----------------------------------------------------------------------------------------------------------------------------------
 			"src/Engine/RenderAPI/RenderAPI.hpp"  
 			"src/Engine/RenderAPI/Context.hpp" 
 			"src/Engine/RenderAPI/OpenGL/OpenGLContext.hpp" "src/Engine/RenderAPI/OpenGL/OpenGLContext.cpp" 
 			"src/Engine/RenderAPI/Vulkan/VulkanContext.hpp" "src/Engine/RenderAPI/Vulkan/VulkanContext.cpp" 
-			"src/Engine/Core/Events/EventBus/EventBus.hpp"  "src/Engine/Core/Events/WindowEvents.hpp"
-
- "src/Engine/RenderAPI/OpenGL/OpenGLVertexArray.cpp" "src/Engine/RenderAPI/OpenGL/OpenGLBuffer.cpp")
+			"src/Engine/RenderAPI/OpenGL/OpenGLVertexArray.cpp" 
+			"src/Engine/RenderAPI/OpenGL/OpenGLBuffer.cpp" 
+ "src/Engine/Core/Debug/Logger.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET Engine PROPERTY CXX_STANDARD 20)
 endif()
 
-target_link_libraries(Engine PRIVATE cxx_setup glfw glad imgui ${OPENGL_LIBRARY} PUBLIC EnTT::EnTT glm::glm)
+target_link_libraries(Engine 
+				PRIVATE cxx_setup imgui glfw glad shaderc spirv-cross-c spirv-cross-cpp Vulkan::dxc_lib ${OPENGL_LIBRARY} 
+				PUBLIC EnTT::EnTT glm::glm imgui_header spdlog
+)
 target_include_directories(Engine 
 						   PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src" 
 						   #PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src/include"
@@ -72,3 +79,14 @@ if(MSVC) # If using .hppe VS compiler...
 endif()
 
 target_compile_definitions(Engine PUBLIC GLFW_INCLUDE_NONE)
+
+set(ENGINE_RESOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/res")
+set(ENGINE_OUTPUT_RESOURCE_DIR "${CMAKE_CURRENT_BINARY_DIR}/res")
+
+add_custom_command(
+    TARGET Engine POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${ENGINE_RESOURCE_DIR}
+        ${ENGINE_OUTPUT_RESOURCE_DIR}
+    COMMENT "Copying resources to build directory"
+)
