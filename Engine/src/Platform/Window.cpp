@@ -16,17 +16,17 @@ namespace Engine {
 			break;
 		case Engine::RenderAPI::VULKAN :
 		{
-			ENGINE_ASSERT(false, "Vulkan not currently supported");
+			ENGINE_CORE_ASSERT(false, "Vulkan not currently supported");
 		}
 		break;
 		case Engine::RenderAPI::D3D11 :
 		{
-			ENGINE_ASSERT(false, "D3D11 not currently supported");
+			ENGINE_CORE_ASSERT(false, "D3D11 not currently supported");
 		}
 		break;
 		case Engine::RenderAPI::D3D12 :
 		{
-			ENGINE_ASSERT(false, "D3D12 not currently supported");
+			ENGINE_CORE_ASSERT(false, "D3D12 not currently supported");
 		}
 		break;
 		}

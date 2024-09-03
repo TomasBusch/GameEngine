@@ -7,7 +7,7 @@
 extern Engine::Application* Engine::CreateApplication(Application::Args args);
 
 int main(int argc, char* argv[]) {
-	Engine::Core::Logger::Init();
+	Engine::Log::Core::Init();
 
 	Engine::Application::Create({""});
 	bool test = true;

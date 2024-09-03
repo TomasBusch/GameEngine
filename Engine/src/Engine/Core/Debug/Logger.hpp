@@ -1,77 +1,38 @@
 #pragma once
 #include "Engine/Core/Base.hpp"
 
+#pragma warning(push, 0)
 #include <spdlog/logger.h>
+#pragma warning(pop)
 
-namespace Engine{
+namespace Engine::Log{
+	class Core {
+	public:
+		static void Init();
 
-	namespace Client {
-		class Logger {
-		public:
-			static void Init();
+	public:
+		static Ref<::spdlog::logger> Logger;
+	};
 
-			template<typename ...Args>
-			inline static void Info(Args&& ...args) {
-				s_Logger->info(std::forward<Args>(args...));
-			}
+	class Client {
+	public:
+		static void Init();
 
-			template<typename ...Args>
-			inline static void Error(Args&& ...args) {
-				s_Logger->error(std::forward<Args>(args...));
-			}
-
-			template<typename ...Args>
-			inline static void Critical(Args&& ...args) {
-				s_Logger->critical(std::forward<Args>(args...));
-			}
-
-			template<typename ...Args>
-			inline static void Debug(Args&& ...args) {
-				s_Logger->debug(std::forward<Args>(args...));
-			}
-
-			template<typename ...Args>
-			inline static void Warn(Args&& ...args) {
-				s_Logger->warn(std::forward<Args>(args...));
-			}
-
-		private:
-			static Ref<spdlog::logger> s_Logger;
-		};
-
-	}
-	namespace Core {
-		class Logger {
-		public:
-			static void Init();
-
-			template<typename ...Args>
-			inline static void Info(Args&& ...args) {
-				s_Logger->info(std::forward<Args>(args)...);
-			}
-
-			template<typename ...Args>
-			inline static void Error(Args&& ...args) {
-				s_Logger->error(std::forward<Args>(args)...);
-			}
-
-			template<typename ...Args>
-			inline static void Critical(Args&& ...args) {
-				s_Logger->critical(std::forward<Args>(args)...);
-			}
-
-			template<typename ...Args>
-			inline static void Debug(Args&& ...args) {
-				s_Logger->debug(std::forward<Args>(args)...);
-			}
-
-			template<typename ...Args>
-			inline static void Warn(Args&& ...args) {
-				s_Logger->warn(std::forward<Args>(args)...);
-			}
-
-		private:
-			static Ref<spdlog::logger> s_Logger;
-		};
-	}
+	public:
+		static Ref<::spdlog::logger> Logger;
+	};
 }
+
+// Core log macros
+#define ENGINE_CORE_TRACE(...)    ::Engine::Log::Core::Logger->trace(__VA_ARGS__)
+#define ENGINE_CORE_INFO(...)     ::Engine::Log::Core::Logger->info(__VA_ARGS__)
+#define ENGINE_CORE_WARN(...)     ::Engine::Log::Core::Logger->warn(__VA_ARGS__)
+#define ENGINE_CORE_ERROR(...)    ::Engine::Log::Core::Logger->error(__VA_ARGS__)
+#define ENGINE_CORE_CRITICAL(...) ::Engine::Log::Core::Logger->critical(__VA_ARGS__)
+
+// Client log macros
+#define ENGINE_TRACE(...)         ::Engine::Log::Client::Logger->trace(__VA_ARGS__)
+#define ENGINE_INFO(...)          ::Engine::Log::Client::Logger->info(__VA_ARGS__)
+#define ENGINE_WARN(...)          ::Engine::Log::Client::Logger->warn(__VA_ARGS__)
+#define ENGINE_ERROR(...)         ::Engine::Log::Client::Logger->error(__VA_ARGS__)
+#define ENGINE_CRITICAL(...)      ::Engine::Log::Client::Logger->critical(__VA_ARGS__)

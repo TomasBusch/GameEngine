@@ -13,7 +13,7 @@ namespace Engine {
 
 	Application& Application::Get()
 	{
-		ENGINE_ASSERT(g_Application != nullptr, "ERROR: Application was never created.");
+		ENGINE_CORE_ASSERT(g_Application != nullptr, "ERROR: Application was never created.");
 		return *g_Application;
 	};
 
@@ -50,9 +50,9 @@ namespace Engine {
 		Resource::ShaderModule::Get().LoadFile("");
 
 		//Init Client Logger (core logger is initialized before application initilization)
-		Client::Logger::Init();
+		Log::Client::Init();
 
-		Core::Logger::Info("OnInit()");
+		ENGINE_CORE_INFO("Client logger initialized");
 		OnInit();
 
 		m_Initialized = true;
@@ -68,7 +68,7 @@ namespace Engine {
 
 	void Application::Run()
 	{
-		ENGINE_ASSERT(g_Application->m_Initialized, "ERROR: Application was never initialized. Remember to call Application::Get().Init().");
+		ENGINE_CORE_ASSERT(g_Application->m_Initialized, "ERROR: Application was never initialized. Remember to call Application::Get().Init().");
 
 
 		while (m_Running)
@@ -96,7 +96,7 @@ namespace Engine {
 
 	void Application::OnTextEvent(Input::TextEvent e)
 	{
-
+		std::cout << (char)e.UnicodeCode << std::endl;
 	}
 
 	void Application::OnMouseScrollEvent(Input::MouseScrollEvent e)
