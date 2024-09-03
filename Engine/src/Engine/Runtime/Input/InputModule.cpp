@@ -113,18 +113,6 @@ namespace Engine::Input {
             glfwSetCursorPosCallback(GlfwWindow, cursor_callback);
             glfwSetScrollCallback(GlfwWindow, scroll_callback);
             glfwSetMouseButtonCallback(GlfwWindow, mousebutton_callback);
-            /*glfwSetMonitorCallback
-            glfwSetWindowCloseCallback
-            glfwSetWindowContentScaleCallback
-            glfwSetWindowFocusCallback
-            glfwSetWindowIconifyCallback
-            glfwSetWindowMaximizeCallback
-            glfwSetWindowPosCallback
-            glfwSetWindowRefreshCallback
-            glfwSetWindowSizeCallback
-            
-            glfwSetErrorCallback
-            glfwSetDropCallback*/
 
             m_Initialized = true;
         }
