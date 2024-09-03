@@ -83,10 +83,15 @@ target_compile_definitions(Engine PUBLIC GLFW_INCLUDE_NONE)
 set(ENGINE_RESOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/res")
 set(ENGINE_OUTPUT_RESOURCE_DIR "${CMAKE_CURRENT_BINARY_DIR}/res")
 
-add_custom_command(
-    TARGET Engine POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    add_custom_target(engine_res ALL 
+        COMMAND ${CMAKE_COMMAND} -E copy_directory 
         ${ENGINE_RESOURCE_DIR}
         ${ENGINE_OUTPUT_RESOURCE_DIR}
-    COMMENT "Copying resources to build directory"
-)
+        COMMENT "Release mode - copying resource files"
+    )
+    message("Release mode - copying resource files")
+    add_dependencies(Engine engine_res)
+else()
+    message("Debug mode - not copying resource files")
+endif()

@@ -12,6 +12,8 @@ endif()
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Release>:Release>")
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
+set(VS_STARTUP_PROJECT Editor)
+
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 project (
@@ -69,8 +71,46 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
   target_compile_definitions(cxx_setup INTERFACE COMPILER_MSVC)
 endif()
 
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  target_compile_definitions(cxx_setup INTERFACE LINUX)
+  message(STATUS "Configuring on/for Linux")
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+  target_compile_definitions(cxx_setup INTERFACE MAC_OS)
+    message(STATUS "Configuring on/for MacOS")
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+  target_compile_definitions(cxx_setup INTERFACE WIN_32)
+      message(STATUS "Configuring on/for Windows")
+elseif(CMAKE_SYSTEM_NAME STREQUAL "AIX")
+  message(FATAL_ERROR "IBM AIX Not supported")
+else()
+  message(FATAL_ERROR "${CMAKE_SYSTEM_NAME} Not supported")
+endif() 
+
+if(MSVC)
+    target_compile_options(cxx_setup 
+        INTERFACE
+            /EHsc
+            /W2
+            # /Wall
+    )
+else()
+
+    target_compile_options(cxx_setup 
+        INTERFACE
+            -Wall
+            # -Wextra
+            # -Wpedantic
+    )
+endif()
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  target_compile_definitions(cxx_setup INTERFACE DEBUG)
+elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+  target_compile_definitions(cxx_setup INTERFACE RELEASE)
+endif()
+
 #Set /cmake folder as the modules path
-set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
 #Setup generation of global project variables in c++
 configure_file("config.hpp.in" "${PROJECT_SOURCE_DIR}/include/config.hpp" ESCAPE_QUOTES)
@@ -92,7 +132,7 @@ endif()
 
 #include external projects
 add_subdirectory("extern/assimp")
-set_target_properties(assimp UpdateAssimpLibsDebugSymbolsAndDLLs uninstall PROPERTIES FOLDER extern)
+set_target_properties(assimp uninstall PROPERTIES FOLDER extern)
 add_subdirectory("extern/entt")
 set_target_properties(EnTT PROPERTIES FOLDER extern)
 add_subdirectory("extern/filewatch")

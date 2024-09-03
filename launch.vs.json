@@ -6,13 +6,15 @@
       "type": "default",
       "project": "CMakeLists.txt",
       "projectTarget": "SandBox.exe (SandBox\\SandBox.exe)",
-      "name": "SandBox.exe (SandBox\\SandBox.exe)"
+      "name": "SandBox.exe (SandBox\\SandBox.exe)",
+      "currentDir": "${workspaceRoot}\\Editor"
     },
     {
       "type": "default",
       "project": "CMakeLists.txt",
       "projectTarget": "Editor.exe (Editor\\Editor.exe)",
-      "name": "Editor.exe (Editor\\Editor.exe)"
+      "name": "Editor.exe (Editor\\Editor.exe)",
+      "currentDir": "${workspaceRoot}\\SandBox"
     }
   ]
 }

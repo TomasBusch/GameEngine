@@ -14,14 +14,17 @@ set_target_properties(Editor PROPERTIES
 set(SANDBOX_RESOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/res")
 set(SANDBOX_OUTPUT_RESOURCE_DIR "${CMAKE_CURRENT_BINARY_DIR}/res")
 
-target_compile_definitions(SandBox PRIVATE $<$<CONFIG:Debug>:SANDBOX_RESOURCE_DIR> $<$<CONFIG:Release>:SANDBOX_OUTPUT_RESOURCE_DIR>)
+#target_compile_definitions(SandBox PRIVATE $<$<CONFIG:Debug>:SANDBOX_RESOURCE_DIR> $<$<CONFIG:Release>:SANDBOX_OUTPUT_RESOURCE_DIR>)
 
-message(INFO ${SANDBOX_RESOURCE_COMMAND})
-
-add_custom_command(
-    TARGET SandBox POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory 
-    ${SANDBOX_RESOURCE_DIR} 
-    ${SANDBOX_OUTPUT_RESOURCE_DIR}
-    COMMENT "Copying resources to build directory"
-)
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    add_custom_target(sandbox_res ALL 
+        COMMAND ${CMAKE_COMMAND} -E copy_directory 
+        ${SANDBOX_RESOURCE_DIR}
+        ${SANDBOX_OUTPUT_RESOURCE_DIR}
+        COMMENT "Release mode - copying resource files"
+    )
+    message("Release mode - copying resource files")
+    add_dependencies(SandBox sandbox_res)
+else()
+    message("Debug mode - not copying resource files")
+endif()
