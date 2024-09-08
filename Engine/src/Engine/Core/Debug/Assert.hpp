@@ -36,7 +36,13 @@
 // Currently accepts at least the condition and one additional parameter (the message) being optional
 #define ENGINE_ASSERT(...) ENGINE_EXPAND_MACRO( ENGINE_INTERNAL_ASSERT_GET_MACRO(__VA_ARGS__)(_, __VA_ARGS__) )
 #define ENGINE_CORE_ASSERT(...) ENGINE_EXPAND_MACRO( ENGINE_INTERNAL_ASSERT_GET_MACRO(__VA_ARGS__)(_CORE_, __VA_ARGS__) )
+
+#define ENGINE_BREAK(...) ENGINE_ASSERT(false, __VA_ARGS__)
+#define ENGINE_CORE_BREAK(...) ENGINE_CORE_ASSERT(false, __VA_ARGS__)
 #else
 #define ENGINE_ASSERT(...)
 #define ENGINE_CORE_ASSERT(...)
+
+#define ENGINE_BREAK(...)
+#define ENGINE_CORE_BREAK(...)
 #endif
