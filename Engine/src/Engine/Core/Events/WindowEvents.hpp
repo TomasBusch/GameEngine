@@ -69,27 +69,33 @@ namespace Engine {
 		{}
 	};
 
-	class WindowIconifyEvent : public Event {
+	class WindowRestoreEvent : public Event {
 	public:
-		bool Iconified;
-	public:
-		WindowIconifyEvent(bool iconified)
-			:Iconified(iconified), Event(Event::Priority::REAL_TIME)
+		WindowRestoreEvent()
+			:Event(Event::Priority::REAL_TIME)
 		{}
-		WindowIconifyEvent(bool iconified, Event::Priority priority)
-			:Iconified(iconified), Event(priority)
+		WindowRestoreEvent(Event::Priority priority)
+			:Event(priority)
+		{}
+	};
+
+	class WindowMinimizeEvent : public Event {
+	public:
+		WindowMinimizeEvent()
+			:Event(Event::Priority::REAL_TIME)
+		{}
+		WindowMinimizeEvent(Event::Priority priority)
+			:Event(priority)
 		{}
 	};
 
 	class WindowMaximizeEvent : public Event {
 	public:
-		bool Maximized;
-	public:
-		WindowMaximizeEvent(bool maximized)
-			:Maximized(maximized), Event(Event::Priority::REAL_TIME)
+		WindowMaximizeEvent()
+			:Event(Event::Priority::REAL_TIME)
 		{}
-		WindowMaximizeEvent(bool maximized, Event::Priority priority)
-			:Maximized(maximized), Event(priority)
+		WindowMaximizeEvent(Event::Priority priority)
+			:Event(priority)
 		{}
 	};
 

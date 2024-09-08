@@ -19,7 +19,8 @@
 			"src/Engine/Core/Events/EventBus/EventBus.hpp" 
 #-----------Platform: /-----------------------------------------------------------------------------------------------------------------------------------
 			"src/Platform/Window.hpp" "src/Platform/Window.cpp" 
-			"src/Platform/OpenGL/OpenGLWindow.cpp" "src/Platform/OpenGL/OpenGLWindow.hpp" 
+			"src/Platform/OpenGL/GLFWOpenGLWindow.cpp" "src/Platform/OpenGL/GLFWOpenGLWindow.hpp" 
+			"src/Platform/OpenGL/SDL3OpenGLWindow.cpp" "src/Platform/OpenGL/SDL3OpenGLWindow.hpp"
 			#"src/Platform/Vulkan/VulkanWindow.cpp" "src/Platform/Vulkan/VulkanWindow.hpp" 
 #-----------Runtime: /------------------------------------------------------------------------------------------------------------------------------------
 			"src/Engine/Runtime/Application.hpp" "src/Engine/Runtime/Application.cpp" 
@@ -55,14 +56,22 @@
 			"src/Engine/RenderAPI/Vulkan/VulkanContext.hpp" "src/Engine/RenderAPI/Vulkan/VulkanContext.cpp" 
 			"src/Engine/RenderAPI/OpenGL/OpenGLVertexArray.cpp" 
 			"src/Engine/RenderAPI/OpenGL/OpenGLBuffer.cpp" 
- "src/Engine/Core/Debug/Logger.cpp")
+			"src/Engine/Core/Debug/Logger.cpp"  
+			"src/Engine/RenderAPI/OpenGL/OpenGLIndexBuffer.cpp" 
+			"src/Engine/RenderAPI/Context.cpp" 
+			"src/Engine/RenderAPI/OpenGL/OpenGLFramebuffer.cpp" 
+			"src/Engine/RenderAPI/OpenGL/OpenGLTexture.cpp" 
+			"src/Engine/RenderAPI/OpenGL/OpenGLUniformBuffer.cpp" 
+			"src/Engine/RenderAPI/OpenGL/OpenGLShaderStorageBuffer.cpp" 
+			"src/Engine/RenderAPI/OpenGL/OpenGLPixelBuffer.cpp"
+)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET Engine PROPERTY CXX_STANDARD 20)
 endif()
 
 target_link_libraries(Engine 
-				PRIVATE cxx_setup imgui glfw glad shaderc spirv-cross-c spirv-cross-cpp Vulkan::dxc_lib ${OPENGL_LIBRARY} 
+				PRIVATE cxx_setup imgui glfw SDL3-static glad shaderc spirv-cross-c spirv-cross-cpp Vulkan::dxc_lib ${OPENGL_LIBRARY} 
 				PUBLIC EnTT::EnTT glm::glm imgui_header spdlog
 )
 target_include_directories(Engine 

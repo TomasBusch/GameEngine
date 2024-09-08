@@ -107,14 +107,22 @@ void Engine::OpenGLWindow::SetCallbacks()
 		WindowEventsBus::Broadcast(&IWindowEvents::OnWindowFocusEvent, e);
 	};
 
-	auto window_iconify_callback = [](GLFWwindow* window, int iconified) {
-		WindowIconifyEvent e = WindowIconifyEvent(iconified);
-		WindowEventsBus::Broadcast(&IWindowEvents::OnWindowIconifyEvent, e);
+	auto window_minimize_callback = [](GLFWwindow* window, int restored) {
+		WindowMinimizeEvent e = WindowMinimizeEvent();
+		WindowEventsBus::Broadcast(&IWindowEvents::OnWindowMinimizeEvent, e);
+		if (restored == GLFW_TRUE) {
+			WindowRestoreEvent e = WindowRestoreEvent();
+			WindowEventsBus::Broadcast(&IWindowEvents::OnWindowRestoreEvent, e);
+		}
 	};
 
-	auto window_maximize_callback = [](GLFWwindow* window, int maximized) {
-		WindowMaximizeEvent e = WindowMaximizeEvent(maximized);
+	auto window_maximize_callback = [](GLFWwindow* window, int restored) {
+		WindowMaximizeEvent e = WindowMaximizeEvent();
 		WindowEventsBus::Broadcast(&IWindowEvents::OnWindowMaximizeEvent, e);
+		if (restored == GLFW_TRUE) {
+			WindowRestoreEvent e = WindowRestoreEvent();
+			WindowEventsBus::Broadcast(&IWindowEvents::OnWindowRestoreEvent, e);
+		}
 	};
 
 	auto window_refresh_callback = [](GLFWwindow* window) {
@@ -128,7 +136,7 @@ void Engine::OpenGLWindow::SetCallbacks()
 	glfwSetWindowSizeCallback(m_WindowHandle, window_size_callback);
 	glfwSetWindowContentScaleCallback(m_WindowHandle, window_content_scale_callback);
 	glfwSetWindowFocusCallback(m_WindowHandle, window_focus_callback);
-	glfwSetWindowIconifyCallback(m_WindowHandle, window_iconify_callback);
+	glfwSetWindowIconifyCallback(m_WindowHandle, window_minimize_callback);
 	glfwSetWindowMaximizeCallback(m_WindowHandle, window_maximize_callback);
 	glfwSetWindowRefreshCallback(m_WindowHandle, window_refresh_callback);
 }

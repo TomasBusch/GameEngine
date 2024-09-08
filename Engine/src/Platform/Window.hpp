@@ -16,7 +16,8 @@ namespace Engine {
 		virtual void OnWindowSizeEvent(WindowSizeEvent e) = 0;
 		virtual void OnWindowContentScaleEvent(WindowContentScaleEvent e) = 0;
 		virtual void OnWindowPositionEvent(WindowPositionEvent e) = 0;
-		virtual void OnWindowIconifyEvent(WindowIconifyEvent e) = 0;
+		virtual void OnWindowRestoreEvent(WindowRestoreEvent e) = 0;
+		virtual void OnWindowMinimizeEvent(WindowMinimizeEvent e) = 0;
 		virtual void OnWindowMaximizeEvent(WindowMaximizeEvent e) = 0;
 		virtual void OnWindowFocusEvent(WindowFocusEvent e) = 0;
 		virtual void OnWindowRefreshEvent(WindowRefreshEvent e) = 0;
@@ -39,7 +40,8 @@ namespace Engine {
 		virtual void OnWindowSizeEvent(WindowSizeEvent e) {};
 		virtual void OnWindowContentScaleEvent(WindowContentScaleEvent e) {};
 		virtual void OnWindowPositionEvent(WindowPositionEvent e) {};
-		virtual void OnWindowIconifyEvent(WindowIconifyEvent e) {};
+		virtual void OnWindowRestoreEvent(WindowRestoreEvent e) {};
+		virtual void OnWindowMinimizeEvent(WindowMinimizeEvent e) {};
 		virtual void OnWindowMaximizeEvent(WindowMaximizeEvent e) {};
 		virtual void OnWindowFocusEvent(WindowFocusEvent e) {};
 		virtual void OnWindowRefreshEvent(WindowRefreshEvent e) {};
