@@ -15,8 +15,9 @@ namespace Engine::Input {
 	};
 
 	struct IMouseEvents {
-		virtual void OnMouseCursorEnterEvent(MouseCursorEnterEvent e) = 0;
-		virtual void OnMouseCursorEvent(MouseCursorEvent e) = 0;
+		virtual void OnMouseEnterEvent(MouseEnterEvent e) = 0;
+		virtual void OnMouseLeaveEvent(MouseLeaveEvent e) = 0;
+		virtual void OnMouseMoveEvent(MouseMoveEvent e) = 0;
 		virtual void OnMouseButtonEvent(MouseButtonEvent e) = 0;
 		virtual void OnMouseScrollEvent(MouseScrollEvent e) = 0;
 	};
@@ -47,8 +48,9 @@ namespace Engine::Input {
 			BusDisconnect();
 		}
 
-		virtual void OnMouseCursorEnterEvent(MouseCursorEnterEvent e) override {};
-		virtual void OnMouseCursorEvent(MouseCursorEvent e) override {};
+		virtual void OnMouseEnterEvent(MouseEnterEvent e) override {};
+		virtual void OnMouseLeaveEvent(MouseLeaveEvent e) override {};
+		virtual void OnMouseMoveEvent(MouseMoveEvent e) override {};
 		virtual void OnMouseButtonEvent(MouseButtonEvent e) override {};
 		virtual void OnMouseScrollEvent(MouseScrollEvent e) override {};
 	};

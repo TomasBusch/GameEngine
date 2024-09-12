@@ -4,22 +4,32 @@
 
 #include "Engine/Core/Base.hpp"
 
+#include <SDL3/SDL.h>
+
 #include "Platform/Window.hpp"
 #include "Engine/Runtime/ImGui/ImGuiContext.hpp"
 
+
 namespace Engine {
 
-	class ImGuiOpenGLContext : public ImGuiContext {
+	class ImGuiSDL3Context : public ImGuiContext {
 	public:
-		ImGuiOpenGLContext(Window* window);
-		~ImGuiOpenGLContext();
+		ImGuiSDL3Context();
+		~ImGuiSDL3Context();
 
-		virtual void Init(const std::string& glsl_version) override;
+		virtual void Init(const std::string& API_Version, void* platform_data) override;
 		virtual void BeginFrame() override;
 		virtual void EndFrame() override;
 		//virtual void Render(Callback<> cb) override;
+
+		constexpr static ContextType GetClassContextType() {
+			return ContextType::GLFW;
+		};
+
+		struct SDL3PlatformData {
+			SDL_Window* m_WindowHandle;
+		};
 	private:
 		struct ImguiData; Scope<ImguiData> m_ImGuiData;
-		Window* m_Window;
 	};
 }

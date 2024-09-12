@@ -25,7 +25,8 @@
 #-----------Runtime: /------------------------------------------------------------------------------------------------------------------------------------
 			"src/Engine/Runtime/Application.hpp" "src/Engine/Runtime/Application.cpp" 
 			"src/Engine/Runtime/ImGui/ImGuiContext.hpp" "src/Engine/Runtime/ImGui/ImGuiContext.cpp" 
-			"src/Engine/Runtime/ImGui/OpenGL/ImGuiOpenGLContext.hpp" "src/Engine/Runtime/ImGui/OpenGL/ImGuiOpenGLContext.cpp" 
+			"src/Engine/Runtime/ImGui/GLFW/ImGuiGLFWContext.hpp" "src/Engine/Runtime/ImGui/GLFW/ImGuiGLFWContext.cpp" 
+			"src/Engine/Runtime/ImGui/SDL3/ImGuiSDL3Context.hpp" "src/Engine/Runtime/ImGui/SDL3/ImGuiSDL3Context.cpp" 
 			"src/Engine/Runtime/Input/InputId.hpp" 
 			"src/Engine/Runtime/Input/InputContext.hpp" 
 			"src/Engine/Runtime/Input/Devices/InputDevice.hpp" 
@@ -64,6 +65,7 @@
 			"src/Engine/RenderAPI/OpenGL/OpenGLUniformBuffer.cpp" 
 			"src/Engine/RenderAPI/OpenGL/OpenGLShaderStorageBuffer.cpp" 
 			"src/Engine/RenderAPI/OpenGL/OpenGLPixelBuffer.cpp"
+			"src/Platform/SDL3/SDL3Input.cpp"
 )
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)

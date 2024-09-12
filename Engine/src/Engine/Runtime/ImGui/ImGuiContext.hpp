@@ -1,21 +1,38 @@
 #pragma once
 #include "Engine/Core/Base.hpp"
 
-#include "Platform/Window.hpp"
-
 #include <imgui.h>
 
 namespace Engine {
+
 	class ImGuiContext {
-	public:
+	protected:
 		ImGuiContext() = default;
 		virtual ~ImGuiContext() = default;
 
+		enum class ContextType {
+			NONE,
+			GLFW,
+			SDL3
+		};
+
+	public:
 		virtual void BeginFrame() = 0;
 		virtual void EndFrame() = 0;
 		//virtual void Render(Callback<> cb) = 0;
-		virtual void Init(const std::string& API_Version) = 0;
+		virtual void Init(const std::string& API_Version, void* platform_data) = 0;
 
-		static Scope<ImGuiContext> Create(Engine::Window* window);
+		template<typename T>
+		static ImGuiContext* Create();
+
+		constexpr static ContextType GetClassContextType() {
+			return ContextType::NONE;
+		};
+	protected:
+		ContextType m_ContextType = ContextType::NONE;
+
+	private:
+		//TODO consider adding mutext to avoid race condition in singleton creation
+		inline static ImGuiContext* s_Instance = nullptr;
 	};
 }

@@ -64,15 +64,21 @@ namespace Engine::Input {
             auto cursor_enter_callback = [](GLFWwindow* window, int32_t entered) {
                 //InputModule* instance = (InputModule*)glfwGetWindowUserPointer(window);
                 //instance->m_Camera->mouse_callback(window, xposIn, yposIn);
-                MouseCursorEnterEvent e = MouseCursorEnterEvent(entered);
-                MouseEventsBus::Broadcast(&IMouseEvents::OnMouseCursorEnterEvent, e);
+                if (entered) {
+                    MouseEnterEvent e = MouseEnterEvent();
+                    MouseEventsBus::Broadcast(&IMouseEvents::OnMouseEnterEvent, e);
+                }
+                else {
+                    MouseLeaveEvent e = MouseLeaveEvent();
+                    MouseEventsBus::Broadcast(&IMouseEvents::OnMouseLeaveEvent, e);
+                }
             };
 
             auto cursor_callback = [](GLFWwindow* window, double xposIn, double yposIn) {
                 //InputModule* instance = (InputModule*)glfwGetWindowUserPointer(window);
                 //instance->m_Camera->mouse_callback(window, xposIn, yposIn);
-                MouseCursorEvent e = MouseCursorEvent({xposIn, yposIn});
-                MouseEventsBus::Broadcast(&IMouseEvents::OnMouseCursorEvent, e);
+                MouseMoveEvent e = MouseMoveEvent({xposIn, yposIn}, { xposIn, yposIn });
+                MouseEventsBus::Broadcast(&IMouseEvents::OnMouseMoveEvent, e);
             };
 
             auto scroll_callback = [](GLFWwindow* window, double xoffset, double yoffset) {
@@ -85,24 +91,13 @@ namespace Engine::Input {
             auto mousebutton_callback = [](GLFWwindow* window, int button, int action, int mods) {
                 KeyAction k_action = (action == GLFW_PRESS) ? KeyAction::PRESSED : (action == GLFW_RELEASE) ? KeyAction::RELEASED : KeyAction::REPEAT;
                 KeyModifiers k_mods = KeyModifiers();
-                if (mods & GLFW_MOD_SHIFT) {
-                    k_mods.MOD_SHIFT = true;
-                }
-                if (mods & GLFW_MOD_CONTROL) {
-                    k_mods.MOD_CONTROL = true;
-                }
-                if (mods & GLFW_MOD_ALT) {
-                    k_mods.MOD_ALT = true;
-                }
-                if (mods & GLFW_MOD_SUPER) {
-                    k_mods.MOD_SUPER = true;
-                }
-                if (mods & GLFW_MOD_CAPS_LOCK) {
-                    k_mods.MOD_CAPS_LOCK = true;
-                }
-                if (mods & GLFW_MOD_NUM_LOCK) {
-                    k_mods.MOD_NUM_LOCK = true;
-                }
+                    k_mods.MOD_SHIFT = (mods & GLFW_MOD_SHIFT);
+                    k_mods.MOD_CONTROL = (mods & GLFW_MOD_CONTROL);
+                    k_mods.MOD_ALT = (mods & GLFW_MOD_ALT);
+                    k_mods.MOD_SUPER = (mods & GLFW_MOD_SUPER);
+                    k_mods.MOD_CAPS_LOCK = (mods & GLFW_MOD_CAPS_LOCK);
+                    k_mods.MOD_NUM_LOCK = (mods & GLFW_MOD_NUM_LOCK);
+
                 MouseButtonEvent e = MouseButtonEvent((MouseButtonCode)button, k_action, k_mods);
                 MouseEventsBus::Broadcast(&IMouseEvents::OnMouseButtonEvent, e);
             };

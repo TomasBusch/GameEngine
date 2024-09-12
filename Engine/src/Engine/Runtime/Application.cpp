@@ -2,8 +2,6 @@
 
 #include "Application.hpp"
 
-#include "Engine/Runtime/ImGui/ImGuiContext.hpp"
-
 #include "Engine/Runtime/Resources/ShaderModule.hpp"
 #include "Engine/Core/Debug/Logger.hpp"
 
@@ -42,8 +40,8 @@ namespace Engine {
 
 		//Init ImGui context
 		//TODO consider moving to window
-		m_ImGuiContext = ImGuiContext::Create(m_Window.get());
-		m_ImGuiContext->Init("#version 150");
+		//m_ImGuiContext = ImGuiContext::Create(m_Window.get());
+		//m_ImGuiContext->Init("#version 150");
 
 		//Init shader loader module
 		//TODO move to Renderer
@@ -74,9 +72,9 @@ namespace Engine {
 		while (m_Running)
 		{
 			m_Window->OnUpdate();
-			m_ImGuiContext->BeginFrame();
+			m_Window->ImGuiCtxInstance()->BeginFrame();
 			ImGuiRender();
-			m_ImGuiContext->EndFrame();
+			m_Window->ImGuiCtxInstance()->EndFrame();
 
 		}
 
@@ -85,8 +83,8 @@ namespace Engine {
 
 	//void Application::ImGuiRender()
 	//{
-	//	//static bool show_demo_ui;
-	//	//ImGui::ShowDemoWindow(&show_demo_ui);
+	//	static bool show_demo_ui;
+	//	ImGui::ShowDemoWindow(&show_demo_ui);
 	//}
 
 	void Application::OnKeyEvent(Input::KeyEvent e)
@@ -109,7 +107,7 @@ namespace Engine {
 		m_Focused = e.Focused;
 	}
 
-	void Application::OnMouseCursorEvent(Input::MouseCursorEvent e)
+	void Application::OnMouseMoveEvent(Input::MouseMoveEvent e)
 	{
 
 	}
@@ -121,7 +119,7 @@ namespace Engine {
 
 	void Application::OnWindowMaximizeEvent(WindowMaximizeEvent e) 
 	{
-		m_Minimized = !e.Maximized;
+		m_Minimized = false;
 	}
 
 	void Application::OnWindowCloseEvent(WindowCloseEvent e)

@@ -2,6 +2,7 @@
 
 
 #include <glad/gl.h>
+#include <SDL3/SDL.h>
 #include <SDL3/SDL_events.h>
 
 namespace Engine {
@@ -30,23 +31,23 @@ namespace Engine {
 
 	static SystemEventsCallbacks g_SystemEventCallbacks;
 
-	OpenGLWindow::OpenGLWindow(Window::Params& params)
-		:m_Width(params.width), m_Height(params.height), m_WindowHandle(nullptr), m_OpenGLContext(nullptr), Window(params)
+	SDL3OpenGLWindow::SDL3OpenGLWindow(Window::Params& params)
+		:m_Width(params.width), m_Height(params.height), m_WindowHandle(nullptr), m_OpenGLContext(nullptr), m_ImGuiContext(nullptr), Window(params)
 	{
 
 	}
 
-	OpenGLWindow::~OpenGLWindow()
+	SDL3OpenGLWindow::~SDL3OpenGLWindow()
 	{
 
 	}
 
-	void OpenGLWindow::Init()
+	void SDL3OpenGLWindow::Init()
 	{
 
-		if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMEPAD))
+		if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMEPAD | SDL_INIT_EVENTS) < 0)
 		{
-			ENGINE_CORE_BREAK("Failed to initialized SDL3");
+			ENGINE_CORE_BREAK(SDL_GetError());
 		}
 
 		//TODO: Handle errors with SDL_GetError()
@@ -69,8 +70,8 @@ namespace Engine {
 		}
 
 		SDL_SetWindowPosition(m_WindowHandle, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
-		*m_OpenGLContext = SDL_GL_CreateContext(m_WindowHandle);
-		SDL_GL_MakeCurrent(m_WindowHandle, *m_OpenGLContext);
+		m_OpenGLContext = SDL_GL_CreateContext(m_WindowHandle);
+		SDL_GL_MakeCurrent(m_WindowHandle, m_OpenGLContext);
 		SDL_ShowWindow(m_WindowHandle);
 
 		//SDL_GL_SetSwapInterval(1); // Enable vsync
@@ -80,14 +81,14 @@ namespace Engine {
 		SetCallbacks();
 	}
 
-	void OpenGLWindow::OnUpdate()
+	void SDL3OpenGLWindow::OnUpdate()
 	{
 		SDL_GL_SwapWindow(m_WindowHandle);
 		glClear(GL_COLOR_BUFFER_BIT);
 		PollEvents();
 	}
 
-	void OpenGLWindow::PollEvents() {
+	void SDL3OpenGLWindow::PollEvents() {
 
 		SDL_Event event;
 		while (SDL_PollEvent(&event))
@@ -153,6 +154,11 @@ namespace Engine {
 				break;
 			}
 
+			default: {
+				//Return unhandled events to the queue
+				SDL_PushEvent(&event);
+			}
+
 			}
 
 		//--Sleep while minimized to reduce resource consumption (should not go here)
@@ -164,35 +170,40 @@ namespace Engine {
 		}
 	}
 
-	void OpenGLWindow::Shutdown()
+	void SDL3OpenGLWindow::Shutdown()
 	{
 		//TODO check if this is the last sdl window open
-		SDL_GL_DestroyContext(*m_OpenGLContext);
+		SDL_GL_DestroyContext(m_OpenGLContext);
 		SDL_DestroyWindow(m_WindowHandle);
 		SDL_Quit();
 	}
 
-	bool OpenGLWindow::ShouldClose()
+	bool SDL3OpenGLWindow::ShouldClose()
 	{
 		return m_shouldClose;
 	}
 
-	uint32_t OpenGLWindow::GetWidth()
+	uint32_t SDL3OpenGLWindow::GetWidth()
 	{
 		return m_Width;
 	}
 
-	uint32_t OpenGLWindow::GetHeight()
+	uint32_t SDL3OpenGLWindow::GetHeight()
 	{
 		return m_Height;
 	}
 
-	void* OpenGLWindow::getNativeHandle()
+	ImGuiContext* SDL3OpenGLWindow::ImGuiCtxInstance()
+	{
+		return nullptr;
+	}
+
+	void* SDL3OpenGLWindow::getNativeHandle()
 	{
 		return m_WindowHandle;
 	}
 
-	void OpenGLWindow::SetCallbacks()
+	void SDL3OpenGLWindow::SetCallbacks()
 	{
 		g_SystemEventCallbacks.framebuffer_size_callback = [](int width, int height) {
 			glViewport(0, 0, width, height);
@@ -244,5 +255,17 @@ namespace Engine {
 			WindowRefreshEvent e = WindowRefreshEvent();
 			WindowEventsBus::Broadcast(&IWindowEvents::OnWindowRefreshEvent, e);
 	    };
+	}
+
+	void SDL3OpenGLWindow::SetWindowGrabInput(bool grab)
+	{
+		SDL_SetWindowKeyboardGrab(m_WindowHandle, grab);
+		SDL_SetWindowMouseGrab(m_WindowHandle, grab);
+	}
+
+	void SDL3OpenGLWindow::SetVsync(bool vsync)
+	{
+		SDL_GL_SetSwapInterval(vsync);
+		m_Vsync = vsync;
 	}
 }

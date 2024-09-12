@@ -8,6 +8,8 @@
 #include "Engine/RenderAPI/Context.hpp"
 #include "Engine/RenderAPI/RenderAPI.hpp"
 
+#include "Engine/Runtime/ImGui/ImGuiContext.hpp"
+
 namespace Engine {
 
 	struct IWindowEvents {
@@ -55,7 +57,6 @@ namespace Engine {
 			Engine::RenderAPI::RenderAPITypes RenderAPI = Engine::RenderAPI::OPENGL;
 		};
 
-	public:
 		Window(Params params) : m_RenderAPI(params.RenderAPI) {};
 		virtual ~Window() = default;
 
@@ -64,8 +65,13 @@ namespace Engine {
 		virtual void Shutdown() = 0;
 		virtual bool ShouldClose() = 0;
 
+		virtual void SetWindowGrabInput(bool grab) = 0;
+		virtual void SetVsync(bool vsync) = 0;
+
 		virtual std::uint32_t GetWidth() = 0;
 		virtual std::uint32_t GetHeight() = 0;
+
+		virtual ImGuiContext* ImGuiCtxInstance() = 0;
 
 		virtual void* getNativeHandle() = 0;
 
@@ -74,5 +80,7 @@ namespace Engine {
 		static Scope<Window> Create(Params& params);
 	private:
 		Engine::RenderAPI::RenderAPITypes m_RenderAPI;
+	protected:
+		bool m_Vsync = false;
 	};
 }

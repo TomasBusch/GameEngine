@@ -1,36 +1,34 @@
 #include "Engine/Core/Base.hpp"
 
 #include "ImGuiContext.hpp"
-#include "OpenGL/ImGuiOpenGLContext.hpp"
+#include "GLFW/ImGuiGLFWContext.hpp"
+#include "SDL3/ImGuiSDL3Context.hpp"
 
 namespace Engine {
 
-	Scope<ImGuiContext> ImGuiContext::Create(Window* window)
+	template<>
+	ImGuiContext* ImGuiContext::Create<ImGuiGLFWContext>()
 	{
-		switch (window->GetRenderAPIType())
-		{
-		case RenderAPI::OPENGL :
-		{
-			return CreateScope<ImGuiOpenGLContext>(window);
+		if (s_Instance == nullptr) {
+			return new ImGuiGLFWContext();
 		}
-		break;
-		case RenderAPI::VULKAN :
-		{
-			ENGINE_CORE_ASSERT(false, "Vulkan is not currently supported");
+		else {
+			ENGINE_CORE_ASSERT(s_Instance->m_ContextType == ImGuiGLFWContext::GetClassContextType(), 
+				"Trying to create incompatible ImguiContext and Window types");
+			return (ImGuiGLFWContext*)s_Instance;
 		}
-		break;
+	}
 
-		case RenderAPI::D3D11 :
-		{
-			ENGINE_CORE_ASSERT(false, "D3D11 is not currently supported");
+	template<>
+	ImGuiContext* ImGuiContext::Create<ImGuiSDL3Context>()
+	{
+		if (s_Instance == nullptr) {
+			return new ImGuiSDL3Context();
 		}
-		break;
-
-		case RenderAPI::D3D12 :
-		{
-			ENGINE_CORE_ASSERT(false, "D3D12 is not currently supported");
-		}
-		break;
+		else {
+			ENGINE_CORE_ASSERT(s_Instance->m_ContextType == ImGuiSDL3Context::GetClassContextType(),
+				"Trying to create incompatible ImguiContext and Window types");
+			return (ImGuiSDL3Context*)s_Instance;
 		}
 	}
 }

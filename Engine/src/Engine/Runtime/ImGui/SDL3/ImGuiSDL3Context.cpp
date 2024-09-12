@@ -1,29 +1,32 @@
-#include "ImguiOpenGLContext.hpp"
+#include "ImGuiSDL3Context.hpp"
 
 #include <imgui.h>
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
 #include <GLFW/glfw3.h>
 
-struct Engine::ImGuiOpenGLContext::ImguiData {
+struct Engine::ImGuiSDL3Context::ImguiData {
     ImGuiIO* io;
     ImGuiStyle* style;
 };
 
-Engine::ImGuiOpenGLContext::ImGuiOpenGLContext(Window* window)
-    :m_ImGuiData(CreateScope<ImguiData>()), m_Window(window)
+Engine::ImGuiSDL3Context::ImGuiSDL3Context()
 {
+    m_ImGuiData = CreateScope<ImguiData>();
+    m_ContextType = ContextType::GLFW;
 }
 
-Engine::ImGuiOpenGLContext::~ImGuiOpenGLContext()
+Engine::ImGuiSDL3Context::~ImGuiSDL3Context()
 {
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 }
 
-void Engine::ImGuiOpenGLContext::Init(const std::string& glsl_version)
+void Engine::ImGuiSDL3Context::Init(const std::string& API_Version, void* platform_data)
 {
+    SDL3PlatformData* platform = (SDL3PlatformData*)platform_data;
+
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     m_ImGuiData->io = &ImGui::GetIO();
@@ -33,7 +36,7 @@ void Engine::ImGuiOpenGLContext::Init(const std::string& glsl_version)
     m_ImGuiData->io->ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
     //m_ImGuiData->io->ConfigViewportsNoAutoMerge = true;
     //m_ImGuiData->io->ConfigViewportsNoTaskBarIcon = true;
-    
+
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
@@ -47,18 +50,18 @@ void Engine::ImGuiOpenGLContext::Init(const std::string& glsl_version)
     }
 
     // Setup Platform/Renderer backends
-    ImGui_ImplGlfw_InitForOpenGL(static_cast<GLFWwindow*>(m_Window->getNativeHandle()), true);
-    ImGui_ImplOpenGL3_Init(glsl_version.c_str());
+    //ImGui_ImplGlfw_InitForOpenGL(platform->m_WindowHandle, true);
+    ImGui_ImplOpenGL3_Init(API_Version.c_str());
 }
 
-void Engine::ImGuiOpenGLContext::BeginFrame()
+void Engine::ImGuiSDL3Context::BeginFrame()
 {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 }
 
-void Engine::ImGuiOpenGLContext::EndFrame()
+void Engine::ImGuiSDL3Context::EndFrame()
 {
     ImGui::Render();
 
@@ -73,7 +76,7 @@ void Engine::ImGuiOpenGLContext::EndFrame()
     }
 }
 
-//void Engine::ImGuiOpenGLContext::Render(Callback<> cb) {
+//void Engine::ImGuiSDL3Context::Render(Callback<> cb) {
 //
 //
 //    cb();

@@ -4,7 +4,6 @@
 #include "Engine/Core/Base.hpp"
 
 #include "Platform/Window.hpp"
-#include "Engine/Runtime/ImGui/ImGuiContext.hpp"
 
 #include "Engine/Runtime/Scene/Scene.hpp"
 
@@ -56,7 +55,7 @@ namespace Engine {
 
 		virtual void OnMouseScrollEvent(Input::MouseScrollEvent e) override;
 
-		virtual void OnMouseCursorEvent(Input::MouseCursorEvent e) override;
+		virtual void OnMouseMoveEvent(Input::MouseMoveEvent e) override;
 
 		virtual void OnMouseButtonEvent(Input::MouseButtonEvent e) override;
 
@@ -76,7 +75,6 @@ namespace Engine {
 		bool m_Focused = true;
 
 		Scope<Engine::Window> m_Window = nullptr;
-		Scope<ImGuiContext> m_ImGuiContext = nullptr;
 
 		//std::stack<Scene> m_Scenes;
 
