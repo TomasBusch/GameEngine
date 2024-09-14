@@ -66,7 +66,7 @@
 			"src/Engine/RenderAPI/OpenGL/OpenGLShaderStorageBuffer.cpp" 
 			"src/Engine/RenderAPI/OpenGL/OpenGLPixelBuffer.cpp"
 			"src/Platform/SDL3/SDL3Input.cpp"
-)
+ "src/Platform/GLFW/GLFWInput.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET Engine PROPERTY CXX_STANDARD 20)

@@ -418,29 +418,51 @@ namespace Engine::Input {
 	using utf8_codepoint = char32_t;
 	using scancode = int32_t;
 
-	struct InputCallbacks {
-		Callback<KeyCode, KeyAction, KeyModifiers, scancode>	KeyCallback = nullptr;
-		Callback<utf8_codepoint>								CharCallback = nullptr;
-		Callback<bool>											MouseEnterCallback = nullptr;
-		Callback<double, double, double, double> 				MousePosCallback = nullptr;
-		Callback<double, double>								ScrollCallback = nullptr;
-		Callback<MouseButtonCode, KeyAction>		            MouseButtonCallback = nullptr;
-	};
-
-	class SystemInput {
+	class PlatformInput {
 	public:
-		SystemInput()
-			:callbacks(InputCallbacks())
+		PlatformInput()
+			:m_InputCallbacks(InputCallbacks())
 		{}
-		~SystemInput() = default;
+		~PlatformInput() = default;
 
-        void SetKeyCallback(Callback<KeyCode, KeyAction, KeyModifiers, scancode> cb);
-        void SetCharCallback(Callback<utf8_codepoint> cb);
-        void SetMouseEnterCallback(Callback<bool> cb);
-        void SetMousePosCallback(Callback<double, double, double, double> cb);
-        void SetScrollCallback(Callback<double, double> cb);
-        void SetMouseButtonCallback(Callback<MouseButtonCode, KeyAction> cb);
-	public:
-		InputCallbacks callbacks;
+        using KeyCallback = void(*)(KeyCode, KeyAction, KeyModifiers, scancode);
+        using CharacterCallback = void(*)(utf8_codepoint);
+        using MouseEnterCallback = void(*)(bool);
+        using MousePositionCallback = void(*)(double, double, double, double);
+        using ScrollCallback = void(*)(double, double);
+        using MouseButtonCallback = void(*)(MouseButtonCode, KeyAction);
+
+        struct InputCallbacks {
+            KeyCallback	            KeyCallback = nullptr;
+            CharacterCallback       CharCallback = nullptr;
+            MouseEnterCallback      MouseEnterCallback = nullptr;
+            MousePositionCallback   MousePosCallback = nullptr;
+            ScrollCallback          ScrollCallback = nullptr;
+            MouseButtonCallback	    MouseButtonCallback = nullptr;
+        };
+
+        virtual void Init(void *init_data) = 0;
+
+        virtual void StartTextInput() = 0;
+        virtual void StopTextInput() = 0;
+
+
+        enum class CursorState {
+            ENABLED,
+            DISABLED,
+            HIDDEN,
+            CAPTURED
+        };
+        virtual void SetCursor(CursorState state) = 0;
+
+        virtual void SetKeyCallback(KeyCallback cb) = 0;
+        virtual void SetCharCallback(CharacterCallback cb) = 0;
+        virtual void SetMouseEnterCallback(MouseEnterCallback cb) = 0;
+        virtual void SetMousePosCallback(MousePositionCallback cb) = 0;
+        virtual void SetScrollCallback(ScrollCallback cb) = 0;
+        virtual void SetMouseButtonCallback(MouseButtonCallback cb) = 0;
+	protected:
+		InputCallbacks m_InputCallbacks;
+        void* m_WindowHandle = nullptr;
 	};
 }

@@ -5,31 +5,9 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_events.h>
 
+#include <backends/imgui_impl_sdl3.h>
+
 namespace Engine {
-
-	struct SystemEventsCallbacks {
-		std::function<void(int, int)> framebuffer_size_callback;
-
-		std::function<void(void)> window_close_callback;
-
-		std::function<void(int, int)> window_pos_callback;
-
-		std::function<void(int, int)> window_size_callback;
-
-		std::function<void(float, float)> window_content_scale_callback;
-
-		std::function<void(int)> window_focus_callback;
-
-		std::function<void(void)> window_restore_callback;
-
-		std::function<void(void)> window_minimize_callback;
-
-		std::function<void(void)> window_maximize_callback;
-
-		std::function<void(void)> window_refresh_callback;
-	};
-
-	static SystemEventsCallbacks g_SystemEventCallbacks;
 
 	SDL3OpenGLWindow::SDL3OpenGLWindow(Window::Params& params)
 		:m_Width(params.width), m_Height(params.height), m_WindowHandle(nullptr), m_OpenGLContext(nullptr), m_ImGuiContext(nullptr), Window(params)
@@ -39,7 +17,7 @@ namespace Engine {
 
 	SDL3OpenGLWindow::~SDL3OpenGLWindow()
 	{
-
+		Shutdown();
 	}
 
 	void SDL3OpenGLWindow::Init()
@@ -74,11 +52,20 @@ namespace Engine {
 		SDL_GL_MakeCurrent(m_WindowHandle, m_OpenGLContext);
 		SDL_ShowWindow(m_WindowHandle);
 
-		//SDL_GL_SetSwapInterval(1); // Enable vsync
-
 		gladLoadGL(SDL_GL_GetProcAddress);
 
 		SetCallbacks();
+
+		m_ImGuiContext = (ImGuiSDL3Context*)ImGuiContext::Create<ImGuiSDL3Context>();
+
+	}
+
+	void SDL3OpenGLWindow::InitImGui()
+	{
+		ImGuiSDL3Context::PlatformData data;
+		data.m_WindowHandle = m_WindowHandle;
+		data.m_Context = m_OpenGLContext;
+		m_ImGuiContext->Init(&data);
 	}
 
 	void SDL3OpenGLWindow::OnUpdate()
@@ -91,82 +78,76 @@ namespace Engine {
 	void SDL3OpenGLWindow::PollEvents() {
 
 		SDL_Event event;
-		while (SDL_PollEvent(&event))
+		while (SDL_PollEvent(&event) != SDL_FALSE)
 		{
-			//ImGui_ImplSDL3_ProcessEvent(&event);
+			ImGui_ImplSDL3_ProcessEvent(&event);
 
 			if (event.type == SDL_EVENT_QUIT) {
 				m_shouldClose = true;
-				g_SystemEventCallbacks.window_close_callback();
+				m_SysCallbacks.window_close_callback();
 			}
 			if (event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED && event.window.windowID == SDL_GetWindowID(m_WindowHandle)) {
 				m_shouldClose = true;
-				g_SystemEventCallbacks.window_close_callback();
+				m_SysCallbacks.window_close_callback();
 			}
 
 			switch (event.type) {
 			case SDL_EventType::SDL_EVENT_WINDOW_RESIZED: {
 				int32_t height, width;
 				SDL_GetWindowSizeInPixels(m_WindowHandle, &height, &width);
-				g_SystemEventCallbacks.framebuffer_size_callback(height, width);
-				g_SystemEventCallbacks.window_size_callback(event.window.data1, event.window.data2);
+				m_SysCallbacks.framebuffer_size_callback(height, width);
+				m_SysCallbacks.window_size_callback(event.window.data1, event.window.data2);
 				break;
 			}
 
 			case SDL_EventType::SDL_EVENT_WINDOW_MOVED: {
-				g_SystemEventCallbacks.window_pos_callback(event.window.data1, event.window.data2);
+				m_SysCallbacks.window_pos_callback(event.window.data1, event.window.data2);
 			    break;
 			}
 			
 			case SDL_EventType::SDL_EVENT_WINDOW_FOCUS_GAINED:
 			case SDL_EventType::SDL_EVENT_WINDOW_FOCUS_LOST: {
-				g_SystemEventCallbacks.window_focus_callback(event.type == SDL_EventType::SDL_EVENT_WINDOW_FOCUS_GAINED);
+				m_SysCallbacks.window_focus_callback(event.type == SDL_EventType::SDL_EVENT_WINDOW_FOCUS_GAINED);
 				break;
 			}
 
 			case SDL_EventType::SDL_EVENT_WINDOW_MAXIMIZED: {
-				g_SystemEventCallbacks.window_maximize_callback();
+				m_SysCallbacks.window_maximize_callback();
 				break;
 			}
 
 			case SDL_EventType::SDL_EVENT_WINDOW_MINIMIZED: {
-				g_SystemEventCallbacks.window_minimize_callback();
+				m_SysCallbacks.window_minimize_callback();
 				break;
 			}
 
 			case SDL_EventType::SDL_EVENT_WINDOW_EXPOSED: {
-				g_SystemEventCallbacks.window_refresh_callback();
+				m_SysCallbacks.window_refresh_callback();
 				break;
 			}
 
 			case SDL_EventType::SDL_EVENT_WINDOW_DISPLAY_CHANGED: {
-				//g_SystemEventCallbacks.window_refresh_callback();
+				//m_SysCallbacks.window_refresh_callback();
 				break;
 			}
 
 			case SDL_EventType::SDL_EVENT_WINDOW_DISPLAY_SCALE_CHANGED: {
-				g_SystemEventCallbacks.window_content_scale_callback(event.window.data1, event.window.data2);
+				m_SysCallbacks.window_content_scale_callback(event.window.data1, event.window.data2);
 				break;
 			}
 
 			case SDL_EventType::SDL_EVENT_WINDOW_RESTORED: {
-				g_SystemEventCallbacks.window_restore_callback();
+				m_SysCallbacks.window_restore_callback();
 				break;
 			}
 
 			default: {
 				//Return unhandled events to the queue
-				SDL_PushEvent(&event);
+				// ERROR: Causes infinite loop with imgui
+				//SDL_PushEvent(&event);
 			}
 
 			}
-
-		//--Sleep while minimized to reduce resource consumption (should not go here)
-		//if (SDL_GetWindowFlags(m_WindowHandle) & SDL_WINDOW_MINIMIZED)
-		//{
-		//	SDL_Delay(10);
-		//	continue;
-		//}
 		}
 	}
 
@@ -195,7 +176,7 @@ namespace Engine {
 
 	ImGuiContext* SDL3OpenGLWindow::ImGuiCtxInstance()
 	{
-		return nullptr;
+		return m_ImGuiContext;
 	}
 
 	void* SDL3OpenGLWindow::getNativeHandle()
@@ -205,53 +186,53 @@ namespace Engine {
 
 	void SDL3OpenGLWindow::SetCallbacks()
 	{
-		g_SystemEventCallbacks.framebuffer_size_callback = [](int width, int height) {
+		m_SysCallbacks.framebuffer_size_callback = [](int width, int height) {
 			glViewport(0, 0, width, height);
 			FramebufferSizeEvent e = FramebufferSizeEvent(width, height);
 			WindowEventsBus::Broadcast(&IWindowEvents::OnFramebufferSizeEvent, e);
 	    };
 
-		g_SystemEventCallbacks.window_close_callback = []() -> void {
+		m_SysCallbacks.window_close_callback = []() -> void {
 			WindowCloseEvent e = WindowCloseEvent();
 			WindowEventsBus::Broadcast(&IWindowEvents::OnWindowCloseEvent, e);
 	    };
 
-		g_SystemEventCallbacks.window_pos_callback = [](int xpos, int ypos) {
+		m_SysCallbacks.window_pos_callback = [](int xpos, int ypos) {
 			WindowPositionEvent e = WindowPositionEvent(xpos, ypos);
 			WindowEventsBus::Broadcast(&IWindowEvents::OnWindowPositionEvent, e);
 	    };
 
-		g_SystemEventCallbacks.window_size_callback = [](int width, int height) {
+		m_SysCallbacks.window_size_callback = [](int width, int height) {
 			WindowSizeEvent e = WindowSizeEvent(width, height);
 			WindowEventsBus::Broadcast(&IWindowEvents::OnWindowSizeEvent, e);
 	    };
 
-		g_SystemEventCallbacks.window_content_scale_callback = [](float xscale, float yscale) {
+		m_SysCallbacks.window_content_scale_callback = [](float xscale, float yscale) {
 			WindowContentScaleEvent e = WindowContentScaleEvent(xscale, yscale);
 			WindowEventsBus::Broadcast(&IWindowEvents::OnWindowContentScaleEvent, e);
 	    };
 
-		g_SystemEventCallbacks.window_focus_callback = [](int focused) {
+		m_SysCallbacks.window_focus_callback = [](int focused) {
 			WindowFocusEvent e = WindowFocusEvent(focused);
 			WindowEventsBus::Broadcast(&IWindowEvents::OnWindowFocusEvent, e);
 	    };
 
-		g_SystemEventCallbacks.window_restore_callback = []() {
+		m_SysCallbacks.window_restore_callback = []() {
 			WindowRestoreEvent e = WindowRestoreEvent();
 			WindowEventsBus::Broadcast(&IWindowEvents::OnWindowRestoreEvent, e);
 		};
 
-		g_SystemEventCallbacks.window_minimize_callback = []() {
+		m_SysCallbacks.window_minimize_callback = []() {
 			WindowMinimizeEvent e = WindowMinimizeEvent();
 			WindowEventsBus::Broadcast(&IWindowEvents::OnWindowMinimizeEvent, e);
 	    };
 
-		g_SystemEventCallbacks.window_maximize_callback = []() {
+		m_SysCallbacks.window_maximize_callback = []() {
 			WindowMaximizeEvent e = WindowMaximizeEvent();
 			WindowEventsBus::Broadcast(&IWindowEvents::OnWindowMaximizeEvent, e);
 	    };
 
-		g_SystemEventCallbacks.window_refresh_callback = []() {
+		m_SysCallbacks.window_refresh_callback = []() {
 			WindowRefreshEvent e = WindowRefreshEvent();
 			WindowEventsBus::Broadcast(&IWindowEvents::OnWindowRefreshEvent, e);
 	    };

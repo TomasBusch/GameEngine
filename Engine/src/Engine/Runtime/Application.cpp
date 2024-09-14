@@ -38,6 +38,8 @@ namespace Engine {
 		//Init Input module
 		Input::InputModule::GetInstance()->Init(m_Window.get());
 
+		m_Window->InitImGui();
+
 		//Init ImGui context
 		//TODO consider moving to window
 		//m_ImGuiContext = ImGuiContext::Create(m_Window.get());
@@ -89,7 +91,13 @@ namespace Engine {
 
 	void Application::OnKeyEvent(Input::KeyEvent e)
 	{
+		if (e.Key == Input::KeyCode::ESCAPE) {
+			Input::InputModule::GetInstance()->StartTextInput();
+		}
 
+		if (e.Key == Input::KeyCode::BACKSPACE) {
+			Input::InputModule::GetInstance()->StopTextInput();
+		}
 	}
 
 	void Application::OnTextEvent(Input::TextEvent e)

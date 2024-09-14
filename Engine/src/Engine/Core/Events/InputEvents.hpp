@@ -37,13 +37,12 @@ namespace Engine::Input {
 	public:
 		MouseButtonCode Button;
 		KeyAction Action;
-		KeyModifiers Modifiers;
 	public:
-		MouseButtonEvent(MouseButtonCode bc, KeyAction action, KeyModifiers mod)
-			:Button(bc), Action(action), Modifiers(mod), Event(Event::Priority::REAL_TIME)
+		MouseButtonEvent(MouseButtonCode bc, KeyAction action)
+			:Button(bc), Action(action), Event(Event::Priority::REAL_TIME)
 		{}
-		MouseButtonEvent(MouseButtonCode bc, KeyAction action, KeyModifiers mod, Event::Priority priority)
-			:Button(bc), Action(action), Modifiers(mod), Event(priority)
+		MouseButtonEvent(MouseButtonCode bc, KeyAction action, Event::Priority priority)
+			:Button(bc), Action(action), Event(priority)
 		{}
 	};
 

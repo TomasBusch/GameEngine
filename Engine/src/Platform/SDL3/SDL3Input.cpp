@@ -1,4 +1,5 @@
 #include "SDL3Input.hpp"
+#include "Engine/Core/Utils/Strings/utf.hpp"
 
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_events.h>
@@ -7,151 +8,126 @@ namespace Engine::Input {
 
     static KeyCode SDL3toEngineKeyCode(SDL_Keycode keycode);
     static MouseButtonCode SDL3toEngineMousebuttonCode(uint8_t button);
-    static char32_t UTF8toChar32_t(const char* bytes);
 
-
-    void SystemInput::SetKeyCallback(Callback<KeyCode, KeyAction, KeyModifiers, scancode> cb)
+    void SDL3Input::Init(void *window_handle)
     {
-
-        callbacks.KeyCallback = cb;
+        m_WindowHandle = window_handle;
+        SDL_Window* window = (SDL_Window*)window_handle;
 
         static SDL_EventFilter keyboardFilter = [](void* thisptr, SDL_Event* event) -> int {
-            switch (event->type) 
-            {
-                case SDL_EventType::SDL_EVENT_KEY_DOWN:
-                case SDL_EventType::SDL_EVENT_KEY_UP:
-                {
-
-                    KeyCode k_keycode = SDL3toEngineKeyCode(event->key.key);
-
-                    KeyAction k_action = (event->key.repeat) ? 
-                        KeyAction::REPEAT :
-                        (event->type == SDL_EventType::SDL_EVENT_KEY_DOWN) ?
-                        KeyAction::PRESSED : 
-                        KeyAction::RELEASED;
-
-                    KeyModifiers k_mods;
-                    k_mods.MOD_SHIFT = (event->key.mod & SDL_KMOD_SHIFT);
-                    k_mods.MOD_CONTROL = (event->key.mod & SDL_KMOD_CTRL);
-                    k_mods.MOD_ALT = (event->key.mod & SDL_KMOD_ALT);
-                    k_mods.MOD_SUPER = (event->key.mod & SDL_KMOD_GUI);
-                    k_mods.MOD_CAPS_LOCK = (event->key.mod & SDL_KMOD_CAPS);
-                    k_mods.MOD_NUM_LOCK = (event->key.mod & SDL_KMOD_NUM);
-
-                    reinterpret_cast<SystemInput*>(thisptr)->callbacks.KeyCallback(k_keycode, k_action, std::move(k_mods), event->key.scancode);
-                    return 1;
-
-                }
-                break;
-                default: return 0;
-            }
-        };
-
-        SDL_AddEventWatch(keyboardFilter, this);
-    };
-    
-    void SystemInput::SetCharCallback(Callback<utf8_codepoint> cb)
-    {
-        callbacks.CharCallback = cb;
-
-        static SDL_EventFilter charFilter = [](void* thisptr, SDL_Event* event) -> int {
+            SDL3Input* instance = (SDL3Input*)thisptr;
             switch (event->type)
             {
-                case SDL_EventType::SDL_EVENT_TEXT_INPUT:
-                {
-                    char32_t codepoint;
-                    codepoint = UTF8toChar32_t(event->text.text);
-                    
-                    reinterpret_cast<SystemInput*>(thisptr)->callbacks.CharCallback(codepoint);
+            case SDL_EventType::SDL_EVENT_KEY_DOWN:
+            case SDL_EventType::SDL_EVENT_KEY_UP:
+            {
+
+                KeyCode k_keycode = SDL3toEngineKeyCode(event->key.key);
+
+                KeyAction k_action = (event->key.repeat) ?
+                    KeyAction::REPEAT :
+                    (event->type == SDL_EventType::SDL_EVENT_KEY_DOWN) ?
+                    KeyAction::PRESSED :
+                    KeyAction::RELEASED;
+
+                KeyModifiers k_mods;
+                k_mods.MOD_SHIFT = (event->key.mod & SDL_KMOD_SHIFT);
+                k_mods.MOD_CONTROL = (event->key.mod & SDL_KMOD_CTRL);
+                k_mods.MOD_ALT = (event->key.mod & SDL_KMOD_ALT);
+                k_mods.MOD_SUPER = (event->key.mod & SDL_KMOD_GUI);
+                k_mods.MOD_CAPS_LOCK = (event->key.mod & SDL_KMOD_CAPS);
+                k_mods.MOD_NUM_LOCK = (event->key.mod & SDL_KMOD_NUM);
+
+                if (instance->m_InputCallbacks.KeyCallback != nullptr) {
+                    instance->m_InputCallbacks.KeyCallback(k_keycode, k_action, k_mods, event->key.scancode);
                     return 1;
                 }
-                break;
-
-                default: return 0;
+                return 0;
             }
-
+            break;
+            default: return 0;
+            }
         };
 
-        SDL_AddEventWatch(charFilter, this);
-    };
+        static SDL_EventFilter charFilter = [](void* thisptr, SDL_Event* event) -> int {
+            SDL3Input* instance = (SDL3Input*)thisptr;
+            switch (event->type)
+            {
+            case SDL_EventType::SDL_EVENT_TEXT_INPUT:
+            {
+                char32_t codepoint;
+                codepoint = ::Engine::Utils::UTF8toChar32_t(event->text.text);
 
-    void SystemInput::SetMouseEnterCallback(Callback<bool> cb)
-    {
-        callbacks.MouseEnterCallback = cb;
+                if (instance->m_InputCallbacks.CharCallback != nullptr) {
+                    instance->m_InputCallbacks.CharCallback(codepoint);
+                    return 1;
+                }
+                return 0;
+            }
+            break;
+
+            default: return 0;
+            }
+        };
 
         static SDL_EventFilter mouseEnterFilter = [](void* thisptr, SDL_Event* event) -> int {
+            SDL3Input* instance = (SDL3Input*)thisptr;
             switch (event->type)
             {
             case SDL_EventType::SDL_EVENT_WINDOW_MOUSE_ENTER:
             case SDL_EventType::SDL_EVENT_WINDOW_MOUSE_LEAVE:
             {
-                reinterpret_cast<SystemInput*>(thisptr)->callbacks.MouseEnterCallback(event->type == SDL_EventType::SDL_EVENT_WINDOW_MOUSE_ENTER);
-                return 1;
+                if (instance->m_InputCallbacks.MouseEnterCallback != nullptr) {
+                    instance->m_InputCallbacks.MouseEnterCallback(event->type == SDL_EventType::SDL_EVENT_WINDOW_MOUSE_ENTER);
+                    return 1;
+                }
+                return 0;
             }
             break;
 
             default: return 0;
             }
-
         };
 
-        SDL_AddEventWatch(mouseEnterFilter, this);
-    };
-
-    void SystemInput::SetMousePosCallback(Callback<double, double, double, double> cb)
-    {
-        callbacks.MousePosCallback = cb;
-
         static SDL_EventFilter mousePosFilter = [](void* thisptr, SDL_Event* event) -> int {
+            SDL3Input* instance = (SDL3Input*)thisptr;
             switch (event->type)
             {
             case SDL_EventType::SDL_EVENT_MOUSE_MOTION:
             {
-                reinterpret_cast<SystemInput*>(thisptr)->callbacks.MousePosCallback(
-                    event->motion.x, event->motion.y, event->motion.xrel, event->motion.yrel
-                );
-                return 1;
+                if (instance->m_InputCallbacks.MousePosCallback != nullptr) {
+                    instance->m_InputCallbacks.MousePosCallback(event->motion.x, event->motion.y, event->motion.xrel, event->motion.yrel);
+                    return 1;
+                }
+                return 0;
             }
             break;
 
             default: return 0;
             }
-
-            };
-
-        SDL_AddEventWatch(mousePosFilter, this);
-    };
-
-    void SystemInput::SetScrollCallback(Callback<double, double> cb)
-    {
-        callbacks.ScrollCallback = cb;
+        };
 
         static SDL_EventFilter scrollFilter = [](void* thisptr, SDL_Event* event) -> int {
+            SDL3Input* instance = (SDL3Input*)thisptr;
             switch (event->type)
             {
             case SDL_EventType::SDL_EVENT_MOUSE_WHEEL:
             {
 
-                reinterpret_cast<SystemInput*>(thisptr)->callbacks.ScrollCallback(
-                    event->wheel.x, event->wheel.y
-                );
-                return 1;
+                if (instance->m_InputCallbacks.ScrollCallback != nullptr) {
+                    instance->m_InputCallbacks.ScrollCallback(event->wheel.x, event->wheel.y);
+                    return 1;
+                }
+                return 0;
             }
             break;
 
             default: return 0;
             }
-
-            };
-
-        SDL_AddEventWatch(scrollFilter, this);
-    };
-
-    void SystemInput::SetMouseButtonCallback(Callback<MouseButtonCode, KeyAction> cb)
-    {
-        callbacks.MouseButtonCallback = cb;
+        };
 
         static SDL_EventFilter mouseButtonFilter = [](void* thisptr, SDL_Event* event) -> int {
+            SDL3Input* instance = (SDL3Input*)thisptr;
             switch (event->type)
             {
             case SDL_EventType::SDL_EVENT_MOUSE_BUTTON_DOWN:
@@ -178,19 +154,92 @@ namespace Engine::Input {
                 k_mods.MOD_CAPS_LOCK = (event->key.mod & SDL_KMOD_CAPS);
                 k_mods.MOD_NUM_LOCK = (event->key.mod & SDL_KMOD_NUM);
 
-                reinterpret_cast<SystemInput*>(thisptr)->callbacks.MouseButtonCallback(
-                    k_buttoncode, k_action
-                );
-                return 1;
+
+                if (instance->m_InputCallbacks.ScrollCallback != nullptr) {
+                    instance->m_InputCallbacks.MouseButtonCallback(k_buttoncode, k_action);
+                    return 1;
+                }
+                return 0;
             }
             break;
 
             default: return 0;
             }
+        };
 
-            };
-
+        SDL_AddEventWatch(keyboardFilter, this);
+        SDL_AddEventWatch(charFilter, this);
+        SDL_AddEventWatch(mouseEnterFilter, this);
+        SDL_AddEventWatch(mousePosFilter, this);
+        SDL_AddEventWatch(scrollFilter, this);
         SDL_AddEventWatch(mouseButtonFilter, this);
+    }
+
+    void SDL3Input::StartTextInput()
+    {
+        SDL_StartTextInput((SDL_Window*)m_WindowHandle);
+    }
+
+    void SDL3Input::StopTextInput()
+    {
+        SDL_StopTextInput((SDL_Window*)m_WindowHandle);
+    }
+
+    void SDL3Input::SetCursor(CursorState state)
+    {
+
+        if (state == CursorState::ENABLED) {
+            SDL_ShowCursor();
+            SDL_CaptureMouse(false);
+            SDL_SetRelativeMouseMode(false);
+        }
+        else if (state == CursorState::DISABLED) {
+            SDL_HideCursor();
+            SDL_CaptureMouse(true);
+            //This seems to be close to being depracated in favor of SDL_SetWindowRelativeMouseMode(), however it does not seem to be implemented yet
+            SDL_SetRelativeMouseMode(true);
+        }
+        else if (state == CursorState::HIDDEN) {
+            SDL_HideCursor();
+            SDL_CaptureMouse(false);
+            SDL_SetRelativeMouseMode(false);
+        }
+        else if (state == CursorState::CAPTURED) {
+            SDL_ShowCursor();
+            SDL_CaptureMouse(true);
+            SDL_SetRelativeMouseMode(false);
+        }
+    }
+
+    void SDL3Input::SetKeyCallback(KeyCallback cb)
+    {
+
+        m_InputCallbacks.KeyCallback = cb;
+    };
+    
+    void SDL3Input::SetCharCallback(CharacterCallback cb)
+    {
+        m_InputCallbacks.CharCallback = cb;
+    };
+
+    void SDL3Input::SetMouseEnterCallback(MouseEnterCallback cb)
+    {
+        m_InputCallbacks.MouseEnterCallback = cb;
+    };
+
+    void SDL3Input::SetMousePosCallback(MousePositionCallback cb)
+    {
+        m_InputCallbacks.MousePosCallback = cb;
+    };
+
+    void SDL3Input::SetScrollCallback(ScrollCallback cb)
+    {
+        m_InputCallbacks.ScrollCallback = cb;
+    };
+
+    void SDL3Input::SetMouseButtonCallback(MouseButtonCallback cb)
+    {
+        m_InputCallbacks.MouseButtonCallback = cb;
     };
 
     static KeyCode SDL3toEngineKeyCode(SDL_Keycode keycode) {
@@ -451,28 +500,5 @@ namespace Engine::Input {
 
     static MouseButtonCode SDL3toEngineMousebuttonCode(uint8_t button) {
         return (MouseButtonCode)(button - 1);
-    }
-
-    static char32_t UTF8toChar32_t(const char* bytes) {
-        char32_t codepoint;
-        
-        if ((bytes[0] & 0b10000000) == 0) {
-            // 1 byte code point, ASCII
-            codepoint = (bytes[0] & 0b01111111);
-        }
-        else if ((bytes[0] & 0b11100000) == 0b11000000) {
-            // 2 byte code point
-            codepoint = (bytes[0] & 0b00011111) << 6 | (bytes[0 + 1] & 0b00111111);
-        }
-        else if ((bytes[0] & 0b11110000) == 0b11100000) {
-            // 3 byte code point
-            codepoint = (bytes[0] & 0b00001111) << 12 | (bytes[0 + 1] & 0b00111111) << 6 | (bytes[0 + 2] & 0b00111111);
-        }
-        else {
-            // 4 byte code point
-            codepoint = (bytes[0] & 0b00000111) << 18 | (bytes[0 + 1] & 0b00111111) << 12 | (bytes[0 + 2] & 0b00111111) << 6 | (bytes[0 + 3] & 0b00111111);
-        }
-
-        return codepoint;
     }
 }

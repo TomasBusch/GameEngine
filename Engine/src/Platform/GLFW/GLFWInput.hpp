@@ -3,7 +3,7 @@
 #include "Platform/Input.hpp"
 
 namespace Engine::Input {
-	class SDL3Input : public PlatformInput {
+	class GLFWInput : public PlatformInput {
     public:
         virtual void Init(void *window_handle) override;
 
@@ -18,5 +18,7 @@ namespace Engine::Input {
         virtual void SetMousePosCallback(MousePositionCallback cb) override;
         virtual void SetScrollCallback(ScrollCallback cb) override;
         virtual void SetMouseButtonCallback(MouseButtonCallback cb) override;
+
+    
 	};
 }

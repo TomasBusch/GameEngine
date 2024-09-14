@@ -1,9 +1,9 @@
 #include "ImGuiSDL3Context.hpp"
 
 #include <imgui.h>
-#include <backends/imgui_impl_glfw.h>
+#include <backends/imgui_impl_sdl3.h>
 #include <backends/imgui_impl_opengl3.h>
-#include <GLFW/glfw3.h>
+#include <SDL3/SDL.h>
 
 struct Engine::ImGuiSDL3Context::ImguiData {
     ImGuiIO* io;
@@ -19,13 +19,13 @@ Engine::ImGuiSDL3Context::ImGuiSDL3Context()
 Engine::ImGuiSDL3Context::~ImGuiSDL3Context()
 {
     ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
+    ImGui_ImplSDL3_Shutdown();
     ImGui::DestroyContext();
 }
 
-void Engine::ImGuiSDL3Context::Init(const std::string& API_Version, void* platform_data)
+void Engine::ImGuiSDL3Context::Init(void* platform_data)
 {
-    SDL3PlatformData* platform = (SDL3PlatformData*)platform_data;
+    PlatformData* platform = (PlatformData*)platform_data;
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -50,14 +50,17 @@ void Engine::ImGuiSDL3Context::Init(const std::string& API_Version, void* platfo
     }
 
     // Setup Platform/Renderer backends
-    //ImGui_ImplGlfw_InitForOpenGL(platform->m_WindowHandle, true);
-    ImGui_ImplOpenGL3_Init(API_Version.c_str());
+    //SDL_Window* window = SDL_GL_GetCurrentWindow();
+    //SDL_GLContextState* context = SDL_GL_GetCurrentContext();
+
+    ImGui_ImplSDL3_InitForOpenGL(platform->m_WindowHandle, platform->m_Context);
+    ImGui_ImplOpenGL3_Init("#version 460");
 }
 
 void Engine::ImGuiSDL3Context::BeginFrame()
 {
     ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
+    ImGui_ImplSDL3_NewFrame();
     ImGui::NewFrame();
 }
 
@@ -69,10 +72,11 @@ void Engine::ImGuiSDL3Context::EndFrame()
 
     if (m_ImGuiData->io->ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
     {
-        GLFWwindow* backup_current_context = glfwGetCurrentContext();
+        SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
+        SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
         ImGui::UpdatePlatformWindows();
         ImGui::RenderPlatformWindowsDefault();
-        glfwMakeContextCurrent(backup_current_context);
+        SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
     }
 }
 

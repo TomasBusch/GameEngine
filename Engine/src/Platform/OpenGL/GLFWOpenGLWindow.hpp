@@ -13,6 +13,7 @@ namespace Engine {
 		virtual ~GLFWOpenGLWindow();
 
 		virtual void Init() override;
+		virtual void InitImGui() override;
 		virtual void OnUpdate() override;
 		virtual void Shutdown() override;
 		virtual bool ShouldClose() override;

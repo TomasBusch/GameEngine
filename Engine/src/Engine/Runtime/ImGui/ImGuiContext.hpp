@@ -20,7 +20,7 @@ namespace Engine {
 		virtual void BeginFrame() = 0;
 		virtual void EndFrame() = 0;
 		//virtual void Render(Callback<> cb) = 0;
-		virtual void Init(const std::string& API_Version, void* platform_data) = 0;
+		virtual void Init(void* platform_data) = 0;
 
 		template<typename T>
 		static ImGuiContext* Create();

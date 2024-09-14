@@ -17,7 +17,7 @@ namespace Engine {
 		ImGuiSDL3Context();
 		~ImGuiSDL3Context();
 
-		virtual void Init(const std::string& API_Version, void* platform_data) override;
+		virtual void Init(void* platform_data) override;
 		virtual void BeginFrame() override;
 		virtual void EndFrame() override;
 		//virtual void Render(Callback<> cb) override;
@@ -26,8 +26,9 @@ namespace Engine {
 			return ContextType::GLFW;
 		};
 
-		struct SDL3PlatformData {
+		struct PlatformData {
 			SDL_Window* m_WindowHandle;
+			SDL_GLContextState* m_Context;
 		};
 	private:
 		struct ImguiData; Scope<ImguiData> m_ImGuiData;

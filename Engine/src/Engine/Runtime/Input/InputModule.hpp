@@ -3,6 +3,7 @@
 #include "Engine/Core/Base.hpp"
 
 #include "Platform/Window.hpp"
+#include "Platform/Input.hpp"
 
 #include "Engine/Core/Events/EventBus/EventBus.hpp"
 #include "Engine/Core/Events/InputEvents.hpp"
@@ -64,16 +65,19 @@ namespace Engine::Input {
 
 		void Init(Window* window);
 
-//		Ref<Publisher<KeyboardEvent>> GetKeyPublisher() { return m_KeyboardInputPub; };
+		void StartTextInput();
+		void StopTextInput();
+
+		void SetCursor(PlatformInput::CursorState state);
 
 	protected:
-		InputModule() {};
+		InputModule() :m_PlatformInput(nullptr) {};
 		~InputModule() = default;
 	private:
 		static InputModule* g_Instance;
 		static std::mutex s_Mutex;
 		static bool m_Initialized;
 
-//		Ref<Publisher<KeyboardEvent>> m_KeyboardInputPub;
+		Scope<PlatformInput> m_PlatformInput;
 	};
 }

@@ -23,9 +23,9 @@ Engine::ImGuiGLFWContext::~ImGuiGLFWContext()
     ImGui::DestroyContext();
 }
 
-void Engine::ImGuiGLFWContext::Init(const std::string& API_Version, void* platform_data)
+void Engine::ImGuiGLFWContext::Init(void* platform_data)
 {
-    GLFWPlatformData* platform = (GLFWPlatformData*)platform_data;
+    PlatformData* platform = (PlatformData*)platform_data;
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -50,8 +50,10 @@ void Engine::ImGuiGLFWContext::Init(const std::string& API_Version, void* platfo
     }
 
     // Setup Platform/Renderer backends
+    //GLFWwindow* window = glfwGetCurrentContext();
+
     ImGui_ImplGlfw_InitForOpenGL(platform->m_WindowHandle, true);
-    ImGui_ImplOpenGL3_Init(API_Version.c_str());
+    ImGui_ImplOpenGL3_Init("#version 460");
 }
 
 void Engine::ImGuiGLFWContext::BeginFrame()

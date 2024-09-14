@@ -3,6 +3,7 @@ target_include_directories(imgui INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/imgui")
 target_sources(imgui INTERFACE 
 				"imgui/backends/imgui_impl_glfw.cpp" 
 				"imgui/backends/imgui_impl_opengl3.cpp"
+				"imgui/backends/imgui_impl_sdl3.cpp"
 				"imgui/imgui.cpp"
 				"imgui/imgui_demo.cpp"
 				"imgui/imgui_draw.cpp"

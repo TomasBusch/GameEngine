@@ -41,14 +41,18 @@ namespace Engine {
 
 		glfwMakeContextCurrent(m_WindowHandle);
 
-		SetCallbacks();
-
 		gladLoadGL(glfwGetProcAddress);
 
 		m_ImGuiContext = (ImGuiGLFWContext*)ImGuiContext::Create<ImGuiGLFWContext>();
-		ImGuiGLFWContext::GLFWPlatformData data;
+
+		SetCallbacks();
+	}
+
+	void GLFWOpenGLWindow::InitImGui() 
+	{
+		ImGuiGLFWContext::PlatformData data;
 		data.m_WindowHandle = m_WindowHandle;
-		m_ImGuiContext->Init("#version 150", &data);
+		m_ImGuiContext->Init(&data);
 	}
 
 	void GLFWOpenGLWindow::OnUpdate()

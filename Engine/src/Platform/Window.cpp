@@ -12,7 +12,7 @@ namespace Engine {
 		{
 		case Engine::RenderAPI::OPENGL :
 		{
-			return CreateScope<GLFWOpenGLWindow>(params);
+			return CreateScope<SDL3OpenGLWindow>(params);
 		}
 		break;
 		case Engine::RenderAPI::VULKAN :
