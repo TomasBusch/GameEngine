@@ -1,7 +1,6 @@
-/*
-#include "RenderAPI/Context.h"
+#include "Engine/RenderAPI/Context.hpp"
 
-namespace Engine {
+namespace Engine::RenderAPI {
 	class OpenGLContext : public Context {
 	public:
 		OpenGLContext();
@@ -10,4 +9,3 @@ namespace Engine {
 		void Init() override;
 	};
 }
-*/

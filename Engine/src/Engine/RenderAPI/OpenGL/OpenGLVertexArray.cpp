@@ -10,14 +10,25 @@ namespace Engine::RenderAPI {
 		glCreateVertexArrays(1, &m_RenderID);
 	}
 
+	void OpenGLVertexArray::Bind()
+	{
+		glBindVertexArray(m_RenderID);
+	}
+
+	void OpenGLVertexArray::Unbind()
+	{
+		glBindVertexArray(0);
+	}
+
 	OpenGLVertexArray::~OpenGLVertexArray()
 	{
 		glDeleteVertexArrays(1, &m_RenderID);
 	}
 
-	void OpenGLVertexArray::BindBuffer(OpenGLBuffer& vbo, VertexAttribLayout& layout)
+	void OpenGLVertexArray::BindVertexBuffer(OpenGLBuffer& vertexBuffer, VertexAttribLayout& vertexLayout)
 	{
-
+		Bind();
+		vertexBuffer.Bind();
 	}
 
 }

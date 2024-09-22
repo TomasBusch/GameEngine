@@ -43,7 +43,9 @@ namespace Engine::RenderAPI {
 		OpenGLVertexArray();
 		~OpenGLVertexArray();
 
-		void BindBuffer(OpenGLBuffer& vbo, VertexAttribLayout& layout);
+		void Bind();
+		void Unbind();
+		void BindVertexBuffer(OpenGLBuffer& vertexBuffer, VertexAttribLayout& vertexLayout);
 	private:
 		glm::uint32 m_RenderID;
 	};
