@@ -1,8 +1,8 @@
 #include "Engine/Core/Base.hpp"
 
 #include "Platform/Window.hpp"
-#include "Platform/OpenGL/GLFWOpenGLWindow.hpp"
-#include "Platform/OpenGL/SDL3OpenGLWindow.hpp"
+#include "Platform/GLFW/GLFWOpenGLWindow.hpp"
+#include "Platform/SDL3/SDL3OpenGLWindow.hpp"
 #include "Engine/RenderAPI/RenderAPI.hpp"
 
 

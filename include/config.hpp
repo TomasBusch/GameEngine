@@ -3,7 +3,7 @@
 #include <string_view>
 
 namespace VulkanEngine::cmake {
-	inline constexpr std::string_view project_name = "VulkanGameEngine";
+	inline constexpr std::string_view project_name = "GameEngine";
 	inline constexpr std::string_view project_version = "0.0.1.0";
 	inline constexpr int project_version_major { 0 };
 	inline constexpr int project_version_minor { 0 };

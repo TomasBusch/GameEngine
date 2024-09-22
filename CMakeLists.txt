@@ -17,7 +17,7 @@ set(VS_STARTUP_PROJECT Editor)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 project (
-	"VulkanGameEngine"
+	"GameEngine"
 	VERSION 0.0.1.0
 	DESCRIPTION ""
 	LANGUAGES CXX
@@ -158,7 +158,8 @@ add_library(stb INTERFACE)
 target_include_directories(stb INTERFACE "${PROJECT_SOURCE_DIR}/extern/stb")
 add_subdirectory("extern/yaml-cpp")
 set_target_properties(yaml-cpp yaml-cpp-parse yaml-cpp-read yaml-cpp-sandbox PROPERTIES FOLDER extern)
-
+#Already added by assimp
+#add_subdirectory("extern/zlib")
 set_target_properties(zlibstatic PROPERTIES FOLDER extern)
 
 find_package(OpenGL REQUIRED)
@@ -176,7 +177,7 @@ set(VULKAN_COMPONENTS
 #Find Vulkan
 find_package(Vulkan REQUIRED COMPONENTS "${VULKAN_COMPONENTS}")
 if(NOT Vulkan_FOUND)
-	message(FATAL_ERROR "Vulkan SDK could not be found, make sure that the SDK is installed!")
+	message(FATAL_ERROR "VulkanSDK could not be found, make sure that VulkanSDK is installed!")
 else()
 	message(STATUS "Vulkan: Version ${Vulkan_VERSION}")
 endif()
@@ -185,5 +186,6 @@ endif()
 add_subdirectory("Engine")
 add_subdirectory("Editor")
 add_subdirectory("SandBox")
+
 
 

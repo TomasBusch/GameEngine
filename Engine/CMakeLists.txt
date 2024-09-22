@@ -19,8 +19,8 @@
 			"src/Engine/Core/Events/EventBus/EventBus.hpp" 
 #-----------Platform: /-----------------------------------------------------------------------------------------------------------------------------------
 			"src/Platform/Window.hpp" "src/Platform/Window.cpp" 
-			"src/Platform/OpenGL/GLFWOpenGLWindow.cpp" "src/Platform/OpenGL/GLFWOpenGLWindow.hpp" 
-			"src/Platform/OpenGL/SDL3OpenGLWindow.cpp" "src/Platform/OpenGL/SDL3OpenGLWindow.hpp"
+			"src/Platform/GLFW/GLFWOpenGLWindow.cpp" "src/Platform/GLFW/GLFWOpenGLWindow.hpp" 
+			"src/Platform/SDL3/SDL3OpenGLWindow.cpp" "src/Platform/SDL3/SDL3OpenGLWindow.hpp"
 			#"src/Platform/Vulkan/VulkanWindow.cpp" "src/Platform/Vulkan/VulkanWindow.hpp" 
 #-----------Runtime: /------------------------------------------------------------------------------------------------------------------------------------
 			"src/Engine/Runtime/Application.hpp" "src/Engine/Runtime/Application.cpp" 

@@ -37,3 +37,6 @@
 [submodule "extern/locale"]
 	path = extern/locale
 	url = https://github.com/boostorg/locale.git
+[submodule "extern/zlib"]
+	path = extern/zlib
+	url = https://github.com/madler/zlib.git

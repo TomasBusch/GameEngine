@@ -1,6 +1,6 @@
 #include "KeyboardDevice.hpp"
 
-#include "Platform/OpenGL/GLFWOpenGLWindow.hpp"
+#include "Platform/GLFW/GLFWOpenGLWindow.hpp"
 
 #include <GLFW/glfw3.h>
 
