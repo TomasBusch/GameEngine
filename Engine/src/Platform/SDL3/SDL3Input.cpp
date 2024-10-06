@@ -1,8 +1,8 @@
 #include "SDL3Input.hpp"
 #include "Engine/Core/Utils/Strings/utf.hpp"
 
-#include <SDL3/SDL.h>
-#include <SDL3/SDL_events.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_events.h>
 
 namespace Engine::Input {
 
@@ -14,7 +14,7 @@ namespace Engine::Input {
         m_WindowHandle = window_handle;
         SDL_Window* window = (SDL_Window*)window_handle;
 
-        static SDL_EventFilter keyboardFilter = [](void* thisptr, SDL_Event* event) -> int {
+        static SDL_EventFilter keyboardFilter = [](void* thisptr, SDL_Event* event) -> bool {
             SDL3Input* instance = (SDL3Input*)thisptr;
             switch (event->type)
             {
@@ -49,7 +49,7 @@ namespace Engine::Input {
             }
         };
 
-        static SDL_EventFilter charFilter = [](void* thisptr, SDL_Event* event) -> int {
+        static SDL_EventFilter charFilter = [](void* thisptr, SDL_Event* event) -> bool {
             SDL3Input* instance = (SDL3Input*)thisptr;
             switch (event->type)
             {
@@ -70,7 +70,7 @@ namespace Engine::Input {
             }
         };
 
-        static SDL_EventFilter mouseEnterFilter = [](void* thisptr, SDL_Event* event) -> int {
+        static SDL_EventFilter mouseEnterFilter = [](void* thisptr, SDL_Event* event) -> bool {
             SDL3Input* instance = (SDL3Input*)thisptr;
             switch (event->type)
             {
@@ -89,7 +89,7 @@ namespace Engine::Input {
             }
         };
 
-        static SDL_EventFilter mousePosFilter = [](void* thisptr, SDL_Event* event) -> int {
+        static SDL_EventFilter mousePosFilter = [](void* thisptr, SDL_Event* event) -> bool {
             SDL3Input* instance = (SDL3Input*)thisptr;
             switch (event->type)
             {
@@ -107,7 +107,7 @@ namespace Engine::Input {
             }
         };
 
-        static SDL_EventFilter scrollFilter = [](void* thisptr, SDL_Event* event) -> int {
+        static SDL_EventFilter scrollFilter = [](void* thisptr, SDL_Event* event) -> bool {
             SDL3Input* instance = (SDL3Input*)thisptr;
             switch (event->type)
             {
@@ -126,7 +126,7 @@ namespace Engine::Input {
             }
         };
 
-        static SDL_EventFilter mouseButtonFilter = [](void* thisptr, SDL_Event* event) -> int {
+        static SDL_EventFilter mouseButtonFilter = [](void* thisptr, SDL_Event* event) -> bool {
             SDL3Input* instance = (SDL3Input*)thisptr;
             switch (event->type)
             {
@@ -191,23 +191,23 @@ namespace Engine::Input {
         if (state == CursorState::ENABLED) {
             SDL_ShowCursor();
             SDL_CaptureMouse(false);
-            SDL_SetRelativeMouseMode(false);
+            //SDL_SetRelativeMouseMode(false);
         }
         else if (state == CursorState::DISABLED) {
             SDL_HideCursor();
             SDL_CaptureMouse(true);
             //This seems to be close to being depracated in favor of SDL_SetWindowRelativeMouseMode(), however it does not seem to be implemented yet
-            SDL_SetRelativeMouseMode(true);
+            //SDL_SetRelativeMouseMode(true);
         }
         else if (state == CursorState::HIDDEN) {
             SDL_HideCursor();
             SDL_CaptureMouse(false);
-            SDL_SetRelativeMouseMode(false);
+            //SDL_SetRelativeMouseMode(false);
         }
         else if (state == CursorState::CAPTURED) {
             SDL_ShowCursor();
             SDL_CaptureMouse(true);
-            SDL_SetRelativeMouseMode(false);
+            //SDL_SetRelativeMouseMode(false);
         }
     }
 

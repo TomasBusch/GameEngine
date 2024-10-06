@@ -23,7 +23,7 @@ namespace Engine {
 	void SDL3OpenGLWindow::Init()
 	{
 
-		if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMEPAD | SDL_INIT_EVENTS) < 0)
+		if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD | SDL_INIT_EVENTS) < 0)
 		{
 			ENGINE_CORE_BREAK(SDL_GetError());
 		}
@@ -78,7 +78,7 @@ namespace Engine {
 	void SDL3OpenGLWindow::PollEvents() {
 
 		SDL_Event event;
-		while (SDL_PollEvent(&event) != SDL_FALSE)
+		while (SDL_PollEvent(&event))
 		{
 			ImGui_ImplSDL3_ProcessEvent(&event);
 

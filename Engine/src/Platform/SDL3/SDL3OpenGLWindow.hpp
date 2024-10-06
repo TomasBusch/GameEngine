@@ -3,7 +3,7 @@
 #include "Platform/Window.hpp"
 #include "Engine/Runtime/ImGui/SDL3/ImGuiSDL3Context.hpp"
 
-#include <SDL3/SDL.h>
+#include <SDL2/SDL.h>
 
 namespace Engine {
 	class SDL3OpenGLWindow : public Window {

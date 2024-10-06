@@ -1,9 +1,7 @@
-#include <GLFW/glfw3.h>
-#include <iostream>
 
 #include "InputModule.hpp"
 #include "Platform/GLFW/GLFWInput.hpp"
-#include "Platform/SDL3/SDL3Input.hpp"
+//#include "Platform/SDL3/SDL3Input.hpp"
 
 namespace Engine::Input {
 
@@ -23,8 +21,7 @@ namespace Engine::Input {
 
     void InputModule::Init(Window* window)
     {
-        GLFWwindow* GlfwWindow = static_cast<GLFWwindow*>(window->getNativeHandle());
-        m_PlatformInput = CreateScope<SDL3Input>();
+        m_PlatformInput = CreateScope<GLFWInput>();
 
         if (!m_Initialized) {
 

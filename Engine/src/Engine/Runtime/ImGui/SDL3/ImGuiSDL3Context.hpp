@@ -4,7 +4,7 @@
 
 #include "Engine/Core/Base.hpp"
 
-#include <SDL3/SDL.h>
+#include <SDL2/SDL.h>
 
 #include "Platform/Window.hpp"
 #include "Engine/Runtime/ImGui/ImGuiContext.hpp"

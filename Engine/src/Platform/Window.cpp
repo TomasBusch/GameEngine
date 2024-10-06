@@ -2,7 +2,7 @@
 
 #include "Platform/Window.hpp"
 #include "Platform/GLFW/GLFWOpenGLWindow.hpp"
-#include "Platform/SDL3/SDL3OpenGLWindow.hpp"
+//#include "Platform/SDL3/SDL3OpenGLWindow.hpp"
 #include "Engine/RenderAPI/RenderAPI.hpp"
 
 
@@ -12,7 +12,7 @@ namespace Engine {
 		{
 		case Engine::RenderAPI::OPENGL :
 		{
-			return CreateScope<SDL3OpenGLWindow>(params);
+			return CreateScope<GLFWOpenGLWindow>(params);
 		}
 		break;
 		case Engine::RenderAPI::VULKAN :
