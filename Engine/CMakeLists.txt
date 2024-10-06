@@ -10,6 +10,7 @@
 			"src/Engine/Core/Time/Timestep.hpp" 
 			"src/Engine/Core/Time/Timestamp.hpp" 
 			"src/Engine/Core/Debug/Assert.hpp" 
+			"src/Engine/Core/Debug/Logger.cpp"  
 			"src/Engine/Core/Memory/SmartPointers.hpp" 
 			"src/Engine/Core/Events/Event.hpp" 
 			"src/Engine/Core/Events/EventQueue.hpp" 
@@ -20,13 +21,13 @@
 #-----------Platform: /-----------------------------------------------------------------------------------------------------------------------------------
 			"src/Platform/Window.hpp" "src/Platform/Window.cpp" 
 			"src/Platform/GLFW/GLFWOpenGLWindow.cpp" "src/Platform/GLFW/GLFWOpenGLWindow.hpp" 
-			"src/Platform/SDL3/SDL3OpenGLWindow.cpp" "src/Platform/SDL3/SDL3OpenGLWindow.hpp"
+			#"src/Platform/SDL3/SDL3OpenGLWindow.cpp" "src/Platform/SDL3/SDL3OpenGLWindow.hpp"
 			#"src/Platform/Vulkan/VulkanWindow.cpp" "src/Platform/Vulkan/VulkanWindow.hpp" 
 #-----------Runtime: /------------------------------------------------------------------------------------------------------------------------------------
 			"src/Engine/Runtime/Application.hpp" "src/Engine/Runtime/Application.cpp" 
 			"src/Engine/Runtime/ImGui/ImGuiContext.hpp" "src/Engine/Runtime/ImGui/ImGuiContext.cpp" 
 			"src/Engine/Runtime/ImGui/GLFW/ImGuiGLFWContext.hpp" "src/Engine/Runtime/ImGui/GLFW/ImGuiGLFWContext.cpp" 
-			"src/Engine/Runtime/ImGui/SDL3/ImGuiSDL3Context.hpp" "src/Engine/Runtime/ImGui/SDL3/ImGuiSDL3Context.cpp" 
+			#"src/Engine/Runtime/ImGui/SDL3/ImGuiSDL3Context.hpp" "src/Engine/Runtime/ImGui/SDL3/ImGuiSDL3Context.cpp" 
 			"src/Engine/Runtime/Input/InputId.hpp" 
 			"src/Engine/Runtime/Input/InputContext.hpp" 
 			"src/Engine/Runtime/Input/Devices/InputDevice.hpp" 
@@ -34,6 +35,8 @@
 			"src/Engine/Runtime/Input/Devices/Mouse/MouseDevice.hpp" "src/Engine/Runtime/Input/Devices/Mouse/MouseDevice.cpp" 
 			"src/Engine/Runtime/Input/InputModule.hpp" "src/Engine/Runtime/Input/InputModule.cpp" 
 			"src/Engine/Runtime/Resources/ShaderModule.cpp" 
+			#"src/Platform/SDL3/SDL3Input.cpp"
+			"src/Platform/GLFW/GLFWInput.cpp"
 #-----------Scene: /--------------------------------------------------------------------------------------------------------------------------------------
 			"src/Engine/Runtime/Scene/entity.hpp" "src/Engine/Runtime/Scene/entity.cpp" 
 			"src/Engine/Runtime/Scene/Scene.cpp" "src/Engine/Runtime/Scene/Scene.hpp" 
@@ -51,30 +54,28 @@
 			"src/Engine/Runtime/Renderer/Texture.hpp" 
 			"src/Engine/Runtime/Renderer/ShaderGraph.hpp" 
 #-----------RenderAPI: /----------------------------------------------------------------------------------------------------------------------------------
-			"src/Engine/RenderAPI/RenderAPI.hpp"  
-			"src/Engine/RenderAPI/Context.hpp" 
-			"src/Engine/RenderAPI/OpenGL/OpenGLContext.hpp" "src/Engine/RenderAPI/OpenGL/OpenGLContext.cpp" 
-			"src/Engine/RenderAPI/Vulkan/VulkanContext.hpp" "src/Engine/RenderAPI/Vulkan/VulkanContext.cpp" 
-			"src/Engine/RenderAPI/OpenGL/OpenGLVertexArray.cpp" 
-			"src/Engine/RenderAPI/OpenGL/OpenGLBuffer.cpp" 
-			"src/Engine/Core/Debug/Logger.cpp"  
-			"src/Engine/RenderAPI/OpenGL/OpenGLIndexBuffer.cpp" 
-			"src/Engine/RenderAPI/Context.cpp" 
-			"src/Engine/RenderAPI/OpenGL/OpenGLFramebuffer.cpp" 
-			"src/Engine/RenderAPI/OpenGL/OpenGLTexture.cpp" 
-			"src/Engine/RenderAPI/OpenGL/OpenGLUniformBuffer.cpp" 
-			"src/Engine/RenderAPI/OpenGL/OpenGLShaderStorageBuffer.cpp" 
-			"src/Engine/RenderAPI/OpenGL/OpenGLPixelBuffer.cpp"
-			"src/Platform/SDL3/SDL3Input.cpp"
- "src/Platform/GLFW/GLFWInput.cpp")
+			#"src/Engine/RenderAPI/RenderAPI.hpp"  
+			#"src/Engine/RenderAPI/Context.hpp" 
+			#"src/Engine/RenderAPI/OpenGL/OpenGLContext.hpp" "src/Engine/RenderAPI/OpenGL/OpenGLContext.cpp" 
+			#"src/Engine/RenderAPI/Vulkan/VulkanContext.hpp" "src/Engine/RenderAPI/Vulkan/VulkanContext.cpp" 
+			#"src/Engine/RenderAPI/OpenGL/OpenGLVertexArray.cpp" 
+			#"src/Engine/RenderAPI/OpenGL/OpenGLBuffer.cpp" 
+			#"src/Engine/RenderAPI/OpenGL/OpenGLIndexBuffer.cpp" 
+			#"src/Engine/RenderAPI/Context.cpp" 
+			#"src/Engine/RenderAPI/OpenGL/OpenGLFramebuffer.cpp" 
+			#"src/Engine/RenderAPI/OpenGL/OpenGLTexture.cpp" 
+			#"src/Engine/RenderAPI/OpenGL/OpenGLUniformBuffer.cpp" 
+			#"src/Engine/RenderAPI/OpenGL/OpenGLShaderStorageBuffer.cpp" 
+			#"src/Engine/RenderAPI/OpenGL/OpenGLPixelBuffer.cpp"
+)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET Engine PROPERTY CXX_STANDARD 20)
 endif()
 
 target_link_libraries(Engine 
-				PRIVATE cxx_setup imgui glfw SDL3-static glad shaderc spirv-cross-c spirv-cross-cpp Vulkan::dxc_lib ${OPENGL_LIBRARY} 
-				PUBLIC EnTT::EnTT glm::glm imgui_header spdlog
+				PRIVATE cxx_setup glfw SDL2::SDL2 glad_gl_core46 glad_vulkan13 Vulkan::shaderc_combined spirv-cross-c spirv-cross-cpp ${OPENGL_LIBRARY} 
+				PUBLIC EnTT::EnTT glm::glm imgui imgui-sdl2 imgui-glfw imgui-opengl3 imgui-vulkan spdlog
 )
 target_include_directories(Engine 
 						   PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src" 
