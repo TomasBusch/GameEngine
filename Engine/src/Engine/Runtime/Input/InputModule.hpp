@@ -2,11 +2,11 @@
 #include "pch.hpp"
 #include "Engine/Core/Base.hpp"
 
-#include "Platform/Window.hpp"
-#include "Platform/Input.hpp"
+#include "Engine/Runtime/Window.hpp"
+#include "Engine/Input/Input.hpp"
 
-#include "Engine/Core/Events/EventBus/EventBus.hpp"
-#include "Engine/Core/Events/InputEvents.hpp"
+#include "Engine/Events/EventBus/EventBus.hpp"
+#include "Engine/Events/InputEvents.hpp"
 
 namespace Engine::Input {
 

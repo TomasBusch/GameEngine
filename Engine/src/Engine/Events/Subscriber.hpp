@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Engine/Core/Base.hpp"
-#include "Engine/Core/Events/EventQueue.hpp"
+#include "Engine/Events/EventQueue.hpp"
 
 namespace Engine {
 

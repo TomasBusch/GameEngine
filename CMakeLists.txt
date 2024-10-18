@@ -28,6 +28,7 @@ project (
 )
 
 option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
+set(PREFERED_WINDOWING_API "GLFW" CACHE STRING "Choose between SDL/GLFW/NATIVE")
 
 #Set this to compile dll files to the same directory as the executable since RPATH is not supported on Windows
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
@@ -57,16 +58,17 @@ CPMUsePackageLock(package-lock.cmake)
     endif()
 
     if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-      target_compile_definitions(cxx_setup INTERFACE LINUX)
+      target_compile_definitions(cxx_setup INTERFACE "LINUX")
       message(STATUS "Configuring on/for Linux")
     elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-      target_compile_definitions(cxx_setup INTERFACE MAC_OS)
+      target_compile_definitions(cxx_setup INTERFACE "MAC_OS")
         message(STATUS "Configuring on/for MacOS")
     elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-      target_compile_definitions(cxx_setup INTERFACE WIN_32)
+      target_compile_definitions(cxx_setup INTERFACE "WIN_32")
           message(STATUS "Configuring on/for Windows")
-    elseif(CMAKE_SYSTEM_NAME STREQUAL "AIX")
-      message(FATAL_ERROR "IBM AIX Not supported")
+    elseif(CMAKE_SYSTEM_NAME STREQUAL "Android")
+      target_compile_definitions(cxx_setup INTERFACE "ANDROID")
+          message(STATUS "Configuring on/for Android")
     else()
       message(FATAL_ERROR "${CMAKE_SYSTEM_NAME} Not supported")
     endif() 
@@ -87,6 +89,8 @@ CPMUsePackageLock(package-lock.cmake)
                 # -Wpedantic
         )
     endif()
+
+    target_compile_definitions(cxx_setup INTERFACE ${PREFERED_WINDOWING_API})
 
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
       target_compile_definitions(cxx_setup INTERFACE DEBUG)

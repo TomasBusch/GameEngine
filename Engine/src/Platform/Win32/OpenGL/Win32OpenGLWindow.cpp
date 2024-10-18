@@ -1,25 +1,23 @@
-#include "GLFWOpenGLWindow.hpp"
+#ifdef WIN_32
+#include "Engine/RenderAPI/OpenGL/OpenGLWindow.hpp"
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 #include <glad/gl.h>
 
-#include "Engine/Runtime/ImGui/GLFW/ImGuiGLFWContext.hpp"
-
 namespace Engine {
-
-	GLFWOpenGLWindow::GLFWOpenGLWindow(Window::Params& params)
-		:m_Width(params.width), m_Height(params.height), m_WindowHandle(nullptr), m_ImGuiContext(nullptr), Window(params)
+	OpenGLWindow::OpenGLWindow(Window::Params& params)
+	 : Window(params) 
 	{
 
 	}
 
-	GLFWOpenGLWindow::~GLFWOpenGLWindow()
+	OpenGLWindow::~OpenGLWindow()
 	{
 		Shutdown();
 	}
 
-	void GLFWOpenGLWindow::Init()
+	void OpenGLWindow::Init()
 	{
 		//--Hints--
 		glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE);
@@ -32,69 +30,20 @@ namespace Engine {
 		if (!glfwInit())
 			return;
 
-		m_WindowHandle = glfwCreateWindow(m_Width, m_Height, "OpenGL Window", NULL, NULL);
-		if (!m_WindowHandle)
+		m_PlatformData = glfwCreateWindow(m_Width, m_Height, m_Title.c_str(), NULL, NULL);
+		if (!m_PlatformData)
 		{
 			glfwTerminate();
 			return;
 		}
 
-		glfwMakeContextCurrent(m_WindowHandle);
+		glfwMakeContextCurrent((GLFWwindow*)m_PlatformData);
 
+		glfwSwapInterval(m_Vsync);
+
+		//TODO: Move to the RenderContext
 		gladLoadGL(glfwGetProcAddress);
 
-		m_ImGuiContext = (ImGuiGLFWContext*)ImGuiContext::Create<ImGuiGLFWContext>();
-
-		SetCallbacks();
-	}
-
-	void GLFWOpenGLWindow::InitImGui() 
-	{
-		ImGuiGLFWContext::PlatformData data;
-		data.m_WindowHandle = m_WindowHandle;
-		m_ImGuiContext->Init(&data);
-	}
-
-	void GLFWOpenGLWindow::OnUpdate()
-	{
-		glfwSwapBuffers(m_WindowHandle);
-		glClear(GL_COLOR_BUFFER_BIT);
-		glfwPollEvents();
-	}
-
-	void GLFWOpenGLWindow::Shutdown()
-	{
-		//TODO check if this is the last glfw window open
-		glfwTerminate();
-	}
-
-	bool GLFWOpenGLWindow::ShouldClose()
-	{
-		return glfwWindowShouldClose(m_WindowHandle);
-	}
-
-	uint32_t GLFWOpenGLWindow::GetWidth()
-	{
-		return m_Width;
-	}
-
-	uint32_t GLFWOpenGLWindow::GetHeight()
-	{
-		return m_Height;
-	}
-
-	ImGuiContext* GLFWOpenGLWindow::ImGuiCtxInstance()
-	{
-		return (ImGuiContext*)m_ImGuiContext;
-	}
-
-	void* GLFWOpenGLWindow::getNativeHandle()
-	{
-		return m_WindowHandle;
-	}
-
-	void GLFWOpenGLWindow::SetCallbacks()
-	{
 		auto framebuffer_size_callback = [](GLFWwindow* window, int width, int height) {
 			FramebufferSizeEvent e = FramebufferSizeEvent(width, height);
 			WindowEventsBus::Broadcast(&IWindowEvents::OnFramebufferSizeEvent, e);
@@ -148,25 +97,45 @@ namespace Engine {
 			WindowEventsBus::Broadcast(&IWindowEvents::OnWindowRefreshEvent, e);
 			};
 
-		glfwSetFramebufferSizeCallback(m_WindowHandle, framebuffer_size_callback);
-		glfwSetWindowCloseCallback(m_WindowHandle, window_close_callback);
-		glfwSetWindowPosCallback(m_WindowHandle, window_pos_callback);
-		glfwSetWindowSizeCallback(m_WindowHandle, window_size_callback);
-		glfwSetWindowContentScaleCallback(m_WindowHandle, window_content_scale_callback);
-		glfwSetWindowFocusCallback(m_WindowHandle, window_focus_callback);
-		glfwSetWindowIconifyCallback(m_WindowHandle, window_minimize_callback);
-		glfwSetWindowMaximizeCallback(m_WindowHandle, window_maximize_callback);
-		glfwSetWindowRefreshCallback(m_WindowHandle, window_refresh_callback);
+		glfwSetFramebufferSizeCallback((GLFWwindow*)m_PlatformData, framebuffer_size_callback);
+		glfwSetWindowCloseCallback((GLFWwindow*)m_PlatformData, window_close_callback);
+		glfwSetWindowPosCallback((GLFWwindow*)m_PlatformData, window_pos_callback);
+		glfwSetWindowSizeCallback((GLFWwindow*)m_PlatformData, window_size_callback);
+		glfwSetWindowContentScaleCallback((GLFWwindow*)m_PlatformData, window_content_scale_callback);
+		glfwSetWindowFocusCallback((GLFWwindow*)m_PlatformData, window_focus_callback);
+		glfwSetWindowIconifyCallback((GLFWwindow*)m_PlatformData, window_minimize_callback);
+		glfwSetWindowMaximizeCallback((GLFWwindow*)m_PlatformData, window_maximize_callback);
+		glfwSetWindowRefreshCallback((GLFWwindow*)m_PlatformData, window_refresh_callback);
 	}
 
-	void GLFWOpenGLWindow::SetWindowGrabInput(bool grab)
+	void OpenGLWindow::OnUpdate()
 	{
-
+		glfwSwapBuffers((GLFWwindow*)m_PlatformData);
+		glClear(GL_COLOR_BUFFER_BIT);
+		glfwPollEvents();
 	}
 
-	void GLFWOpenGLWindow::SetVsync(bool vsync)
+	void OpenGLWindow::Shutdown()
 	{
-		glfwSwapInterval(vsync);
-		m_Vsync = vsync;
+		//TODO check if this is the last glfw window open
+		glfwTerminate();
+	}
+
+	bool OpenGLWindow::ShouldClose()
+	{
+		return glfwWindowShouldClose((GLFWwindow*)m_PlatformData);
+	}
+
+	void* OpenGLWindow::getNativeHandle()
+	{
+		return (GLFWwindow*)m_PlatformData;
+	}
+
+	void OpenGLWindow::SetWindowGrabInput(bool grab)
+	{
+
 	}
 }
+
+
+#endif //WIN_32

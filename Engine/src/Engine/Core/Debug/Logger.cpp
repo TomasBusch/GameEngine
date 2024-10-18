@@ -4,37 +4,33 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/basic_file_sink.h>
 
-namespace Engine::Log {
+namespace Engine {
 
-	Ref<spdlog::logger> Core::Logger;
+	Ref<spdlog::logger> Logger::m_Core;
+	Ref<spdlog::logger> Logger::m_Client;
 
-	void Core::Init()
+	void Logger::Init()
 	{
-		std::vector<spdlog::sink_ptr> logSinks;
-		logSinks.emplace_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
-		logSinks.emplace_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>("client.log", true));
+		std::vector<spdlog::sink_ptr> corelogSinks;
+		corelogSinks.emplace_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
+		corelogSinks.emplace_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>("client.log", true));
 
-		logSinks[0]->set_pattern("%^[%T] %n: %v%$");
-		logSinks[1]->set_pattern("[%T] [%l] %n: %v");
-		Logger = std::make_shared<spdlog::logger>("CLIENT", begin(logSinks), end(logSinks));
-		spdlog::register_logger(Logger);
-		Logger->set_level(spdlog::level::trace);
-		Logger->flush_on(spdlog::level::trace);
-	}
+		corelogSinks[0]->set_pattern("%^[%T] %n: %v%$");
+		corelogSinks[1]->set_pattern("[%T] [%l] %n: %v");
+		m_Core = std::make_shared<spdlog::logger>("CLIENT", begin(corelogSinks), end(corelogSinks));
+		spdlog::register_logger(m_Core);
+		m_Core->set_level(spdlog::level::trace);
+		m_Core->flush_on(spdlog::level::trace);
 
-	Ref<spdlog::logger> Client::Logger;
+		std::vector<spdlog::sink_ptr> clientlogSinks;
+		clientlogSinks.emplace_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
+		clientlogSinks.emplace_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>("client.log", true));
 
-	void Client::Init()
-	{
-		std::vector<spdlog::sink_ptr> logSinks;
-		logSinks.emplace_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
-		logSinks.emplace_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>("core.log", true));
-
-		logSinks[0]->set_pattern("%^[%T] %n: %v%$");
-		logSinks[1]->set_pattern("[%T] [%l] %n: %v");
-		Logger = std::make_shared<spdlog::logger>("CORE", begin(logSinks), end(logSinks));
-		spdlog::register_logger(Logger);
-		Logger->set_level(spdlog::level::trace);
-		Logger->flush_on(spdlog::level::trace);
+		clientlogSinks[0]->set_pattern("%^[%T] %n: %v%$");
+		clientlogSinks[1]->set_pattern("[%T] [%l] %n: %v");
+		m_Client = std::make_shared<spdlog::logger>("CLIENT", begin(clientlogSinks), end(clientlogSinks));
+		spdlog::register_logger(m_Client);
+		m_Client->set_level(spdlog::level::trace);
+		m_Client->flush_on(spdlog::level::trace);
 	}
 }

@@ -1,6 +1,6 @@
 
 #include "InputModule.hpp"
-#include "Platform/GLFW/GLFWInput.hpp"
+#include "Engine/Input/Input.hpp"
 //#include "Platform/SDL3/SDL3Input.hpp"
 
 namespace Engine::Input {
@@ -21,7 +21,7 @@ namespace Engine::Input {
 
     void InputModule::Init(Window* window)
     {
-        m_PlatformInput = CreateScope<GLFWInput>();
+        m_PlatformInput = CreateScope<PlatformInput>();
 
         if (!m_Initialized) {
 

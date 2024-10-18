@@ -19,7 +19,7 @@ public:
 	}
 };
 
-Engine::Application* Engine::CreateApplication(Engine::Application::Args args) 
+Engine::Application* Engine::Entrypoint(Engine::Application::Args args) 
 {
 	Application::Specs specs;
 	specs.name = "Vulkan Engine";

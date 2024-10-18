@@ -114,8 +114,8 @@
 #SDL2
 	CPMAddPackage(
 	  NAME SDL2
-	  VERSION 2.30.7
-	  GIT_TAG release-2.30.7
+	  VERSION 2.30.8
+	  GIT_TAG release-2.30.8
 	  GITHUB_REPOSITORY libsdl-org/SDL
 	)
 
@@ -159,7 +159,11 @@
 		VERSION 1.0.1
 		GIT_TAG 1.0.1
 		GITHUB_REPOSITORY g-truc/glm
-		OPTIONS "GLM_ENABLE_CXX_20 TRUE"
+		OPTIONS 
+			"GLM_ENABLE_CXX_20 TRUE"
+			#glm does not appear to export any symbols for MSVC so we have to compile it as a static library
+			"GLM_BUILD_LIBRARY FALSE"
+
 	)
 
 #shaderc

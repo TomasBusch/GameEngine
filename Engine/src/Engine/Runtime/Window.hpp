@@ -2,16 +2,15 @@
 #include "pch.hpp"
 #include "Engine/Core/Base.hpp"
 
-#include "Engine/Core/Events/EventBus/EventBus.hpp"
-#include "Engine/Core/Events/WindowEvents.hpp"
+#include "Engine/Events/EventBus/EventBus.hpp"
+#include "Engine/Events/WindowEvents.hpp"
 
-#include "Engine/RenderAPI/Context.hpp"
 #include "Engine/RenderAPI/RenderAPI.hpp"
-
-#include "Engine/Runtime/ImGui/ImGuiContext.hpp"
+#include "Engine/RenderAPI/RenderContext.hpp"
 
 namespace Engine {
 
+	//Events
 	struct IWindowEvents {
 		virtual void OnFramebufferSizeEvent(FramebufferSizeEvent e) = 0;
 		virtual void OnWindowCloseEvent(WindowCloseEvent e) = 0;
@@ -48,40 +47,46 @@ namespace Engine {
 		virtual void OnWindowFocusEvent(WindowFocusEvent e) {};
 		virtual void OnWindowRefreshEvent(WindowRefreshEvent e) {};
 	};
+	//End Events
+
+	enum class WindowAPI {
+		NONE,
+		GLFW_API,
+		SDL2_API,
+		SDL3_API,
+	};
 
 	class Window {
 	public:
 		struct Params {
 			std::uint32_t width = 640, height = 480;
-			std::string Title = "Default Window (OpenGL)";
-			Engine::RenderAPI::RenderAPITypes RenderAPI = Engine::RenderAPI::OPENGL;
+			std::string title = "Default Window (OpenGL)";
+			RenderAPI renderAPI;
 		};
 
-		Window(Params params) : m_RenderAPI(params.RenderAPI) {};
+
+		Window(Params params) : m_Width(params.width), m_Height(params.height), m_Title(params.title) {};
 		virtual ~Window() = default;
 
 		virtual void Init() = 0;
-		virtual void InitImGui() = 0;
 		virtual void OnUpdate() = 0;
 		virtual void Shutdown() = 0;
 		virtual bool ShouldClose() = 0;
 
 		virtual void SetWindowGrabInput(bool grab) = 0;
-		virtual void SetVsync(bool vsync) = 0;
 
-		virtual std::uint32_t GetWidth() = 0;
-		virtual std::uint32_t GetHeight() = 0;
-
-		virtual ImGuiContext* ImGuiCtxInstance() = 0;
+		inline const std::uint32_t GetWidth()  const { return m_Width;  };
+		inline const std::uint32_t GetHeight() const { return m_Height; };
 
 		virtual void* getNativeHandle() = 0;
 
-		const Engine::RenderAPI::RenderAPITypes GetRenderAPIType() const { return m_RenderAPI; }
-
 		static Scope<Window> Create(Params& params);
-	private:
-		Engine::RenderAPI::RenderAPITypes m_RenderAPI;
 	protected:
+		std::uint32_t m_Width, m_Height;
+		std::string m_Title;
+
+		void* m_PlatformData = nullptr;
+
 		bool m_Vsync = false;
 	};
 }

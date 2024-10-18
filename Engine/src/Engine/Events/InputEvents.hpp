@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Event.hpp"
-#include "Platform/Input.hpp"
+#include "Engine/Input/Input.hpp"
 
 #include <glm/glm.hpp>
 

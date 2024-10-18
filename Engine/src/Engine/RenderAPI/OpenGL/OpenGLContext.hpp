@@ -1,13 +1,16 @@
-/*
-#include "RenderAPI/Context.h"
+#pragma once
+
+#include "Engine/RenderAPI/RenderContext.hpp"
 
 namespace Engine {
-	class OpenGLContext : public Context {
+	class OpenGLContext : public RenderContext {
 	public:
 		OpenGLContext();
 		virtual ~OpenGLContext();
 
-		void Init() override;
+		void Init(void* data_ptr) override;
+		void SetVsync(bool vsync) override;
+	public:
+		RenderAPI m_RenderAPI = RenderAPI::OPENGL;
 	};
 }
-*/

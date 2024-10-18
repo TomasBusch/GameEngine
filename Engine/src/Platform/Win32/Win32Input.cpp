@@ -1,4 +1,6 @@
-#include "GLFWInput.hpp"
+#ifdef WIN_32
+
+#include "Engine/Input/Input.hpp"
 
 #include <GLFW/glfw3.h>
 
@@ -8,15 +10,26 @@ namespace Engine::Input {
     static KeyCode GLFWtoEngineKeyCode(int keycode);
     static MouseButtonCode GLFWtoEngineMousebuttonCode(uint8_t button);
 
-    void GLFWInput::Init(void *window_handle)
+    PlatformInput::PlatformInput()
+        :m_InputCallbacks(InputCallbacks())
     {
-        m_WindowHandle = window_handle;
-        GLFWwindow* GlfwWindow = (GLFWwindow*)window_handle;
+
+    }
+
+    PlatformInput::~PlatformInput() 
+    {
+
+    }
+
+    void PlatformInput::Init(void *data_ptr)
+    {
+        m_WindowHandle = data_ptr;
+        GLFWwindow* GlfwWindow = (GLFWwindow*)data_ptr;
 
         glfwSetWindowUserPointer(GlfwWindow, this);
 
         static auto key_callback = [](GLFWwindow* window, int key, int scancode, int action, int mods) {
-            GLFWInput* instance = (GLFWInput*)glfwGetWindowUserPointer(window);
+            PlatformInput* instance = (PlatformInput*)glfwGetWindowUserPointer(window);
 
             KeyAction k_action = (action == GLFW_PRESS) ? 
                 KeyAction::PRESSED : (action == GLFW_RELEASE) ? 
@@ -38,7 +51,7 @@ namespace Engine::Input {
         };
 
         static auto character_callback = [](GLFWwindow* window, uint32_t codepoint) {
-            GLFWInput* instance = (GLFWInput*)glfwGetWindowUserPointer(window);
+            PlatformInput* instance = (PlatformInput*)glfwGetWindowUserPointer(window);
 
             if (instance->m_InputCallbacks.CharCallback != nullptr) {
                 instance->m_InputCallbacks.CharCallback(codepoint);
@@ -46,7 +59,7 @@ namespace Engine::Input {
         };
 
         static auto cursor_enter_callback = [](GLFWwindow* window, int32_t entered) {
-            GLFWInput* instance = (GLFWInput*)glfwGetWindowUserPointer(window);
+            PlatformInput* instance = (PlatformInput*)glfwGetWindowUserPointer(window);
 
             if (instance->m_InputCallbacks.MouseEnterCallback != nullptr) {
                 instance->m_InputCallbacks.MouseEnterCallback((bool)entered);
@@ -54,7 +67,7 @@ namespace Engine::Input {
         };
 
         static auto cursor_callback = [](GLFWwindow* window, double xposIn, double yposIn) {
-            GLFWInput* instance = (GLFWInput*)glfwGetWindowUserPointer(window);
+            PlatformInput* instance = (PlatformInput*)glfwGetWindowUserPointer(window);
 
             if (instance->m_InputCallbacks.MousePosCallback != nullptr) {
                 instance->m_InputCallbacks.MousePosCallback(xposIn, yposIn, xposIn, yposIn);
@@ -62,7 +75,7 @@ namespace Engine::Input {
         };
 
         static auto scroll_callback = [](GLFWwindow* window, double xoffset, double yoffset) {
-            GLFWInput* instance = (GLFWInput*)glfwGetWindowUserPointer(window);
+            PlatformInput* instance = (PlatformInput*)glfwGetWindowUserPointer(window);
 
             if (instance->m_InputCallbacks.ScrollCallback != nullptr) {
                 instance->m_InputCallbacks.ScrollCallback(xoffset, yoffset);
@@ -70,7 +83,7 @@ namespace Engine::Input {
         };
 
         static auto mousebutton_callback = [](GLFWwindow* window, int button, int action, int mods) {
-            GLFWInput* instance = (GLFWInput*)glfwGetWindowUserPointer(window);
+            PlatformInput* instance = (PlatformInput*)glfwGetWindowUserPointer(window);
 
             KeyAction k_action = (action == GLFW_PRESS) ? KeyAction::PRESSED : (action == GLFW_RELEASE) ? KeyAction::RELEASED : KeyAction::REPEAT;
 
@@ -87,17 +100,17 @@ namespace Engine::Input {
         glfwSetMouseButtonCallback(GlfwWindow, mousebutton_callback);
     }
 
-    void GLFWInput::StartTextInput()
+    void PlatformInput::StartTextInput()
     {
 
     }
 
-    void GLFWInput::StopTextInput()
+    void PlatformInput::StopTextInput()
     {
 
     }
 
-    void GLFWInput::SetCursor(CursorState state)
+    void PlatformInput::SetCursor(CursorState state)
     {
 
         if (state == CursorState::ENABLED) {
@@ -114,32 +127,32 @@ namespace Engine::Input {
         }
     }
 
-    void GLFWInput::SetKeyCallback(KeyCallback cb)
+    void PlatformInput::SetKeyCallback(KeyCallback cb)
     {
         m_InputCallbacks.KeyCallback = cb;
     }
 
-    void GLFWInput::SetCharCallback(CharacterCallback cb)
+    void PlatformInput::SetCharCallback(CharacterCallback cb)
     {
         m_InputCallbacks.CharCallback = cb;
     }
 
-    void GLFWInput::SetMouseEnterCallback(MouseEnterCallback cb)
+    void PlatformInput::SetMouseEnterCallback(MouseEnterCallback cb)
     {
         m_InputCallbacks.MouseEnterCallback = cb;
     }
 
-    void GLFWInput::SetMousePosCallback(MousePositionCallback cb)
+    void PlatformInput::SetMousePosCallback(MousePositionCallback cb)
     {
         m_InputCallbacks.MousePosCallback = cb;
     }
 
-    void GLFWInput::SetScrollCallback(ScrollCallback cb)
+    void PlatformInput::SetScrollCallback(ScrollCallback cb)
     {
         m_InputCallbacks.ScrollCallback = cb;
     }
 
-    void GLFWInput::SetMouseButtonCallback(MouseButtonCallback cb)
+    void PlatformInput::SetMouseButtonCallback(MouseButtonCallback cb)
     {
         m_InputCallbacks.MouseButtonCallback = cb;
     }
@@ -275,3 +288,5 @@ namespace Engine::Input {
         return (MouseButtonCode)(button - 1);
     }
 }
+
+#endif //WIN_32
