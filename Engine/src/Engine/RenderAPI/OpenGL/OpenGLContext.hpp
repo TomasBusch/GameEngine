@@ -1,10 +1,8 @@
 #pragma once
-#include "RenderAPI/Context.h"
 #include "Engine/RenderAPI/RenderContext.hpp"
 
-
-
 namespace Engine {
+
 	class OpenGLContext : public RenderContext {
 	public:
 		OpenGLContext();
@@ -13,5 +11,5 @@ namespace Engine {
 		void Init(void* data_ptr) override;
 		void SetVsync(bool vsync) override;
 
-	}
+	};
 }
