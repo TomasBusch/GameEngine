@@ -5,34 +5,27 @@
 #include <spdlog/logger.h>
 #pragma warning(pop)
 
-namespace Engine::Log{
-	class Core {
+namespace Engine{
+	class Logger {
 	public:
 		static void Init();
 
 	public:
-		static Ref<::spdlog::logger> Logger;
-	};
-
-	class Client {
-	public:
-		static void Init();
-
-	public:
-		static Ref<::spdlog::logger> Logger;
+		static Ref<::spdlog::logger> m_Core;
+		static Ref<::spdlog::logger> m_Client;
 	};
 }
 
 // Core log macros
-#define ENGINE_CORE_TRACE(...)    ::Engine::Log::Core::Logger->trace(__VA_ARGS__)
-#define ENGINE_CORE_INFO(...)     ::Engine::Log::Core::Logger->info(__VA_ARGS__)
-#define ENGINE_CORE_WARN(...)     ::Engine::Log::Core::Logger->warn(__VA_ARGS__)
-#define ENGINE_CORE_ERROR(...)    ::Engine::Log::Core::Logger->error(__VA_ARGS__)
-#define ENGINE_CORE_CRITICAL(...) ::Engine::Log::Core::Logger->critical(__VA_ARGS__)
+#define ENGINE_CORE_TRACE(...)    ::Engine::Logger::m_Core->trace(__VA_ARGS__)
+#define ENGINE_CORE_INFO(...)     ::Engine::Logger::m_Core->info(__VA_ARGS__)
+#define ENGINE_CORE_WARN(...)     ::Engine::Logger::m_Core->warn(__VA_ARGS__)
+#define ENGINE_CORE_ERROR(...)    ::Engine::Logger::m_Core->error(__VA_ARGS__)
+#define ENGINE_CORE_CRITICAL(...) ::Engine::Logger::m_Core->critical(__VA_ARGS__)
 
 // Client log macros
-#define ENGINE_TRACE(...)         ::Engine::Log::Client::Logger->trace(__VA_ARGS__)
-#define ENGINE_INFO(...)          ::Engine::Log::Client::Logger->info(__VA_ARGS__)
-#define ENGINE_WARN(...)          ::Engine::Log::Client::Logger->warn(__VA_ARGS__)
-#define ENGINE_ERROR(...)         ::Engine::Log::Client::Logger->error(__VA_ARGS__)
-#define ENGINE_CRITICAL(...)      ::Engine::Log::Client::Logger->critical(__VA_ARGS__)
+#define ENGINE_TRACE(...)         ::Engine::Logger::m_Client->trace(__VA_ARGS__)
+#define ENGINE_INFO(...)          ::Engine::Logger::m_Client->info(__VA_ARGS__)
+#define ENGINE_WARN(...)          ::Engine::Logger::m_Client->warn(__VA_ARGS__)
+#define ENGINE_ERROR(...)         ::Engine::Logger::m_Client->error(__VA_ARGS__)
+#define ENGINE_CRITICAL(...)      ::Engine::Logger::m_Client->critical(__VA_ARGS__)

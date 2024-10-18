@@ -7,38 +7,32 @@
 
 namespace Engine {
 
-	Application* Application::g_Application = nullptr;
-
-	Application& Application::Get()
-	{
-		ENGINE_CORE_ASSERT(g_Application != nullptr, "ERROR: Application was never created.");
-		return *g_Application;
-	};
-
 	Application::Application(const Specs& specs)
 		:m_Specs(specs)
 	{
 	};
 
-	void Application::Create(Args args) {
-		g_Application = CreateApplication(args);
-	};
-
-	void Application::Init()
+	void Application::Init(Ref<AppDependencies> dependencies)
 	{
+		m_Logger = dependencies->logger;
+		m_Config = dependencies->config;
+
 		//Init Window
 		Window::Params windowParams{};
 		windowParams.width = 640;
 		windowParams.height = 480;
-		windowParams.RenderAPI = RenderAPI::OPENGL;
+		windowParams.renderAPI = RenderAPI::OPENGL;
 
 		m_Window = Engine::Window::Create(windowParams);
 		m_Window->Init();
 
+		m_ImguiContext = Engine::ImGuiContext::Create(m_Window.get());
+		m_ImguiContext->Init();
+
 		//Init Input module
 		Input::InputModule::GetInstance()->Init(m_Window.get());
 
-		m_Window->InitImGui();
+		//m_Window->InitImGui();
 
 		//Init ImGui context
 		//TODO consider moving to window
@@ -48,11 +42,6 @@ namespace Engine {
 		//Init shader loader module
 		//TODO move to Renderer
 		Resource::ShaderModule::Get().LoadFile("");
-
-		//Init Client Logger (core logger is initialized before application initilization)
-		Log::Client::Init();
-
-		ENGINE_CORE_INFO("Client logger initialized");
 		OnInit();
 
 		m_Initialized = true;
@@ -68,15 +57,15 @@ namespace Engine {
 
 	void Application::Run()
 	{
-		ENGINE_CORE_ASSERT(g_Application->m_Initialized, "ERROR: Application was never initialized. Remember to call Application::Get().Init().");
+		ENGINE_CORE_ASSERT(m_Initialized, "ERROR: Application was never initialized. Remember to call Application::Init()");
 
 
 		while (m_Running)
 		{
 			m_Window->OnUpdate();
-			m_Window->ImGuiCtxInstance()->BeginFrame();
+			m_ImguiContext->BeginFrame();
 			ImGuiRender();
-			m_Window->ImGuiCtxInstance()->EndFrame();
+			m_ImguiContext->EndFrame();
 
 		}
 

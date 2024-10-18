@@ -3,12 +3,13 @@
 
 #include "Engine/Core/Base.hpp"
 
-#include "Platform/Window.hpp"
+#include "Engine/Runtime/Window.hpp"
+#include "Engine/ImGui/ImGuiContext.hpp"
 
 #include "Engine/Runtime/Scene/Scene.hpp"
 
-#include "Engine/Core/Events/Event.hpp"
-#include "Engine/Core/Events/InputEvents.hpp"
+#include "Engine/Events/Event.hpp"
+#include "Engine/Events/InputEvents.hpp"
 #include "Engine/Runtime/Input/InputModule.hpp"
 
 
@@ -24,7 +25,9 @@ namespace Engine {
 	{
 	public:
 		struct Args {
-			std::string args;
+			std::string width;
+			std::string height;
+			RenderAPI render_api;
 		};
 
 		struct Specs {
@@ -32,16 +35,19 @@ namespace Engine {
 			std::string workDir;
 			Args cmdLineArgs;
 		};
-	public:
-		static Application& Get();
 
+		struct AppDependencies {
+			Ref<Logger> logger = nullptr;
+			Ref<Config> config = nullptr;
+		};
+
+	public:
 		Application(const Specs& specs);
 		virtual ~Application() = default;
 
 		Scope<Engine::Window>& GetWindow();
 	private:
-		static void Create(Args args);
-		void Init();
+		void Init(Ref<AppDependencies> dependencies);
 		void Run();
 		void Shutdown();
 	protected:
@@ -66,20 +72,30 @@ namespace Engine {
 		virtual void OnWindowMaximizeEvent(WindowMaximizeEvent e) override;
 
 	private:
-		static Application* g_Application;
-
 		Specs m_Specs;
 		bool m_Running = true;
 		bool m_Minimized = false;
 		bool m_Initialized = false;
 		bool m_Focused = true;
 
+		//Dependencies
+		Ref<Engine::Logger> m_Logger = nullptr;
+		Ref<Engine::Config> m_Config = nullptr;
+
 		Scope<Engine::Window> m_Window = nullptr;
+		Scope<Engine::ImGuiContext> m_ImguiContext = nullptr;
+
+		//--Systems--
+		//Scope<Engine::RenderSystem> m_RenderSystem = nullptr;
+		//Scope<Engine::AssetSystem> m_AssetManager = nullptr;
+		//Scope<Engine::InputSystem> m_InputSystem = nullptr;
+		//Scope<Engine::ScriptingSystem> m_ScriptingSystem = nullptr;
+		//Scope<Engine::PhysicsSystem> m_PhysicsSystem = nullptr;
 
 		//std::stack<Scene> m_Scenes;
 
 		friend int ::main(int argc, char* argv[]);
 	};
 
-	Application* CreateApplication(Application::Args args);
+	Application* Entrypoint(Application::Args args);
 }

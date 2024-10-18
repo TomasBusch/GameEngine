@@ -51,6 +51,7 @@ _deps
 CMakeUserPresets.json
 /out
 /.vs
+/packages
 
 
 /SandBox/imgui.ini
