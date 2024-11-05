@@ -27,7 +27,7 @@ namespace Engine {
 		struct Args {
 			std::string width;
 			std::string height;
-			RenderAPI render_api;
+			RenderAPI::API render_api;
 		};
 
 		struct Specs {

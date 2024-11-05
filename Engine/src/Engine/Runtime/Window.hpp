@@ -6,7 +6,6 @@
 #include "Engine/Events/WindowEvents.hpp"
 
 #include "Engine/RenderAPI/RenderAPI.hpp"
-#include "Engine/RenderAPI/RenderContext.hpp"
 
 namespace Engine {
 
@@ -61,7 +60,7 @@ namespace Engine {
 		struct Params {
 			std::uint32_t width = 640, height = 480;
 			std::string title = "Default Window (OpenGL)";
-			RenderAPI renderAPI;
+			RenderAPI::API renderAPI;
 		};
 
 

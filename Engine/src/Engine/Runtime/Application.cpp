@@ -2,7 +2,7 @@
 
 #include "Application.hpp"
 
-#include "Engine/Runtime/Resources/ShaderModule.hpp"
+#include "Engine/Runtime/ResourceManagers/ShaderManager.hpp"
 #include "Engine/Core/Debug/Logger.hpp"
 
 namespace Engine {
@@ -21,7 +21,7 @@ namespace Engine {
 		Window::Params windowParams{};
 		windowParams.width = 640;
 		windowParams.height = 480;
-		windowParams.renderAPI = RenderAPI::OPENGL;
+		windowParams.renderAPI = RenderAPI::API::OGL4;
 
 		m_Window = Engine::Window::Create(windowParams);
 		m_Window->Init();
@@ -41,7 +41,7 @@ namespace Engine {
 
 		//Init shader loader module
 		//TODO move to Renderer
-		Resource::ShaderModule::Get().LoadFile("");
+		//Resource::ShaderManager::Get().LoadFile("");
 		OnInit();
 
 		m_Initialized = true;

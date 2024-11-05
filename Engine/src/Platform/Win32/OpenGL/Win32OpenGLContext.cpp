@@ -1,5 +1,5 @@
 #ifdef WIN_32
-#include "Engine/RenderAPI/OpenGL/OpenGLContext.hpp"
+#include "Platform/RenderAPIs/OpenGL/OpenGLContext.hpp"
 
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>

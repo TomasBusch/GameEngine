@@ -3,6 +3,7 @@
 #include <iostream>
 #include <ostream>
 #include <istream>
+#include <filesystem>
 
 #include <cstdint>
 #include <cstddef>
@@ -27,7 +28,6 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include <filesystem>
 
 #include <glm/glm.hpp>
 

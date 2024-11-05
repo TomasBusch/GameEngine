@@ -29,6 +29,6 @@ namespace Engine {
 		ImGuiContextData m_ContextData = ImGuiContextData();
 
 		WindowAPI m_WindowAPI = WindowAPI::NONE;
-		RenderAPI m_RenderAPI = RenderAPI::NONE;
+		RenderAPI::API m_RenderAPI = RenderAPI::API::NONE;
 	};
 }

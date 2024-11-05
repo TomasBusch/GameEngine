@@ -1,11 +1,11 @@
 #pragma once
 
-#include "ShaderGraph.hpp"
-#include "Texture.hpp"
+#include "Engine/RenderAPI/Shader.hpp"
+#include "Engine/RenderAPI/Texture.hpp"
 
 namespace Engine {
 	class Material {
-		ShaderGraph m_Shader;
-		std::vector<ITexture> m_Maps;
+		Shader m_Shader;
+		std::vector<Texture> m_Maps;
 	};
 }

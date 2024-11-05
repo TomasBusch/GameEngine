@@ -4,36 +4,41 @@
 namespace Engine {
 
 	PerspectiveCamera::PerspectiveCamera(uint32_t width, uint32_t height)
-		:m_Position(glm::vec3(0.0f, 0.0f, 0.0f)), m_WorldUp(glm::vec3(0.0f, 1.0f, 0.0f)), m_Yaw(-90.0f), m_Pitch(0.0f), m_Roll(0.0f),
-		m_Direction(glm::vec3(0.0f, 0.0f, -1.0f)), m_FirstLook(true), m_LookSensitivity(0.5f), m_Zoom(45.0f),
-		m_ViewportWidth(width), m_ViewportHeight(height),
-		m_ProjectionMatrix(glm::mat4(1.0f)), m_ViewMatrix(glm::mat4(1.0f)), m_MVPMatrix(glm::mat4(1.0f)),
+		:Camera(glm::vec2(width, height))
+		, m_WorldUp(glm::vec3(0.0f, 1.0f, 0.0f)), m_Yaw(-90.0f), m_Pitch(0.0f), m_Roll(0.0f)
+		, m_FirstLook(true), m_LookSensitivity(0.5f), m_Zoom(45.0f),
 		m_Locked(false),
 		m_MovSpeed(10)
 	{
 		m_CameraRight = glm::normalize(glm::cross(m_WorldUp, m_Direction));
 		m_CameraUp = glm::cross(m_Direction, m_CameraRight);
 
-		m_ProjectionMatrix = glm::perspective(glm::radians(m_Zoom), (float)m_ViewportWidth / (float)m_ViewportHeight, 0.1f, 10000.0f);
-		m_ViewMatrix = glm::lookAt(m_Position, m_Position + m_Direction, m_CameraUp);
-		m_MVPMatrix = m_ProjectionMatrix * m_ViewMatrix;
+		m_Projection = glm::perspective(
+			glm::radians(m_Zoom), 
+			(float)m_ViewportSize.x / (float)m_ViewportSize.y, 
+			m_ClipPlanes.near,
+			m_ClipPlanes.far
+		);
+
+		m_View = glm::lookAt(m_Position, m_Position + m_Direction, m_CameraUp);
+		m_ViewProjection = m_Projection * m_View;
 
 		updateViewMatrix();
 		updateProjectionMatrix();
-		updateMVPMatrix();
+		updateViewProjectionMatrix();
 		updateCameraVectors();
 	}
 
 	void PerspectiveCamera::updateViewMatrix() {
-		m_ViewMatrix = glm::lookAt(m_Position, m_Position + m_Direction, m_CameraUp);
+		m_View = glm::lookAt(m_Position, m_Position + m_Direction, m_CameraUp);
 	}
 
 	void PerspectiveCamera::updateProjectionMatrix() {
-		m_ProjectionMatrix = glm::perspective(glm::radians(m_Zoom), (float)m_ViewportWidth / (float)m_ViewportHeight, 0.1f, 10000.0f);
+		m_Projection = glm::perspective(glm::radians(m_Zoom), (float)m_ViewportSize.x / (float)m_ViewportSize.y, 0.1f, 10000.0f);
 	}
 
-	void PerspectiveCamera::updateMVPMatrix() {
-		m_MVPMatrix = m_ProjectionMatrix * m_ViewMatrix;
+	void PerspectiveCamera::updateViewProjectionMatrix() {
+		m_ViewProjection = m_Projection * m_View;
 	}
 
 	void PerspectiveCamera::updateCameraVectors() {
@@ -45,11 +50,6 @@ namespace Engine {
 
 		m_CameraRight = glm::normalize(glm::cross(m_Direction, m_WorldUp));
 		m_CameraUp = glm::normalize(glm::cross(m_CameraRight, m_Direction));
-	}
-
-	void PerspectiveCamera::setViewportSize(uint32_t width, uint32_t height) {
-		m_ViewportWidth = width;
-		m_ViewportHeight = height;
 	}
 
 	void PerspectiveCamera::move(Camera::Movement movement, float deltaTime) {
@@ -71,7 +71,7 @@ namespace Engine {
 				m_Position -= m_WorldUp * velocity;
 
 			updateViewMatrix();
-			updateMVPMatrix();
+			updateViewProjectionMatrix();
 		}
 	}
 
@@ -81,8 +81,8 @@ namespace Engine {
 			float xpos = static_cast<float>(xposIn);
 			float ypos = static_cast<float>(yposIn);
 
-			float xoffset = xpos - m_ViewportWidth / 2;
-			float yoffset = (m_ViewportHeight / 2) - ypos; // reversed since y-coordinates go from bottom to top
+			float xoffset = xpos - m_ViewportSize.x / 2;
+			float yoffset = (m_ViewportSize.y / 2) - ypos; // reversed since y-coordinates go from bottom to top
 
 			//Avoids jump in first move
 			if (m_FirstLook) {
@@ -107,7 +107,7 @@ namespace Engine {
 				// update Front, Right and Up Vectors using the updated Euler angles
 				updateCameraVectors();
 				updateViewMatrix();
-				updateMVPMatrix();
+				updateViewProjectionMatrix();
 			}
 		}
 	}
@@ -121,7 +121,7 @@ namespace Engine {
 				m_Zoom = 45.0f;
 
 			updateProjectionMatrix();
-			updateMVPMatrix();
+			updateViewProjectionMatrix();
 		}
 	}
 

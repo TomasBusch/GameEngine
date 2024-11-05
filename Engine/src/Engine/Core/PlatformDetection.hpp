@@ -1,15 +1,16 @@
 #pragma once
 
 #ifdef WIN_32
-	#define OPENGL
-	#define VULKAN
-	#define D3D12
-	#define D3D11
+	#define OPENGL_API
+	//#define VULKAN_API
+	//#define D3D12_API
+	//#define D3D11_API
 #elif LINUX
-	#define OPENGL
-	#define VULKAN
+	#define OPENGL_API
+	//#define VULKAN_API
 #elif MAC_OS
-	#define VULKAN
-	#define METAL
+	#define VULKAN_API
+	//#define METAL_API
 #elif ANDROID
-	#define VULKAN
+	#define VULKAN_API
+#endif

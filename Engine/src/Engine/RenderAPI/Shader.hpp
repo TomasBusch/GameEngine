@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Engine::RenderAPI {
+namespace Engine {
 	class Shader {
 	public:
 		Shader() = default;

@@ -30,17 +30,13 @@
 			"src/Platform/Win32/Win32Input.cpp"
 
 #-----------Runtime: /------------------------------------------------------------------------------------------------------------------------------------
-			"src/Engine/Runtime/Application.hpp" "src/Engine/Runtime/Application.cpp" 
-			"src/Engine/Runtime/Window.hpp" "src/Engine/Runtime/Window.cpp"
-			"src/Engine/ImGui/ImGuiContext.hpp" "src/Engine/ImGui/ImGuiContext.cpp" 
-			"src/Engine/ImGui/ImGuiOpenGLContext.hpp" "src/Engine/ImGui/ImGuiOpenGLContext.cpp" 
-			"src/Engine/Runtime/Input/InputId.hpp" 
-			"src/Engine/Runtime/Input/InputContext.hpp" 
-			"src/Engine/Runtime/Input/Devices/InputDevice.hpp" 
-			#"src/Engine/Runtime/Input/Devices/Keyboard/KeyboardDevice.hpp" "src/Engine/Runtime/Input/Devices/Keyboard/KeyboardDevice.cpp" 
-			"src/Engine/Runtime/Input/Devices/Mouse/MouseDevice.hpp" "src/Engine/Runtime/Input/Devices/Mouse/MouseDevice.cpp" 
-			"src/Engine/Runtime/Input/InputModule.hpp" "src/Engine/Runtime/Input/InputModule.cpp" 
-			"src/Engine/Runtime/Resources/ShaderModule.cpp" 
+			"src/Engine/Runtime/Application.cpp" 
+			"src/Engine/Runtime/Window.cpp"
+			"src/Engine/ImGui/ImGuiContext.cpp" 
+			"src/Engine/ImGui/ImGuiOpenGLContext.cpp" 
+			#"src/Engine/Runtime/Input/Devices/Keyboard/KeyboardDevice.cpp" 
+			"src/Engine/Runtime/Input/Devices/Mouse/MouseDevice.cpp" 
+			"src/Engine/Runtime/Input/InputModule.cpp" 
 #-----------Scene: /--------------------------------------------------------------------------------------------------------------------------------------
 			"src/Engine/Runtime/Scene/entity.hpp" "src/Engine/Runtime/Scene/entity.cpp" 
 			"src/Engine/Runtime/Scene/Scene.cpp" "src/Engine/Runtime/Scene/Scene.hpp" 
@@ -49,20 +45,14 @@
 			"src/Engine/Runtime/Scene/Components/TransformComponent.hpp" 
 #-----------Renderer: /-----------------------------------------------------------------------------------------------------------------------------------
 			"src/Engine/Runtime/Renderer/Renderer.hpp" "src/Engine/Runtime/Renderer/Renderer.cpp" 
-			"src/Engine/Runtime/Renderer/RenderPass.hpp" 
-			"src/Engine/Runtime/Renderer/PostProcess.hpp" 
 			"src/Engine/Runtime/Renderer/Mesh.hpp" 
 			"src/Engine/Runtime/Renderer/Model.hpp" 
 			"src/Engine/Runtime/Renderer/Material.hpp" 
-			"src/Engine/Runtime/Renderer/Image.hpp" 
-			"src/Engine/Runtime/Renderer/Texture.hpp" 
-			"src/Engine/Runtime/Renderer/ShaderGraph.hpp" 
+			"src/Engine/Runtime/ResourceManagers/ShaderManager.cpp" 
+			"src/Engine/Runtime/ResourceManagers/ModelManager.cpp" 
+			
 #-----------RenderAPI: /----------------------------------------------------------------------------------------------------------------------------------
 			"src/Engine/RenderAPI/RenderAPI.hpp" 
-			"src/Engine/RenderAPI/RenderContext.hpp" 
-			"src/Engine/RenderAPI/OpenGL/OpenGLContext.hpp"
-			"src/Engine/RenderAPI/OpenGL/OpenGLWindow.hpp"
-			#"src/Engine/RenderAPI/Vulkan/VulkanContext.hpp"
 			#"src/Engine/RenderAPI/OpenGL/OpenGLVertexArray.cpp" 
 			#"src/Engine/RenderAPI/OpenGL/OpenGLBuffer.cpp" 
 			#"src/Engine/RenderAPI/OpenGL/OpenGLIndexBuffer.cpp" 
@@ -71,14 +61,14 @@
 			#"src/Engine/RenderAPI/OpenGL/OpenGLUniformBuffer.cpp" 
 			#"src/Engine/RenderAPI/OpenGL/OpenGLShaderStorageBuffer.cpp" 
 			#"src/Engine/RenderAPI/OpenGL/OpenGLPixelBuffer.cpp"
-)
+  "src/Platform/RenderAPIs/OpenGL/OpenGLVertexBuffer.cpp" "src/Platform/RenderAPIs/OpenGL/OpenGLRenderAPI.cpp" "src/Engine/Runtime/Renderer/PerspectiveCamera.cpp" "src/Engine/Runtime/Renderer/PerspectiveCameraController.cpp" "src/Engine/RenderAPI/VertexBuffer.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET Engine PROPERTY CXX_STANDARD 20)
 endif()
 
 target_link_libraries(Engine 
-				PRIVATE cxx_setup glfw SDL2::SDL2 glad_gl_core46 glad_vulkan13 Vulkan::shaderc_combined spirv-cross-c spirv-cross-cpp ${OPENGL_LIBRARY} 
+				PRIVATE cxx_setup glfw SDL2::SDL2 glad_gl_core46 glad_vulkan13 Vulkan::shaderc_combined spirv-cross-c spirv-cross-cpp assimp ${OPENGL_LIBRARY} 
 				PUBLIC EnTT::EnTT glm::glm imgui imgui-sdl2 imgui-glfw imgui-opengl3 imgui-vulkan spdlog
 )
 target_include_directories(Engine 

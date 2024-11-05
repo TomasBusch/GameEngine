@@ -21,6 +21,6 @@ namespace Engine {
 		virtual void EndFrame() override;
 	protected:
 		WindowAPI m_WindowAPI = WindowAPI::GLFW_API;
-		RenderAPI m_RenderAPI = RenderAPI::OPENGL;
+		RenderAPI::API m_RenderAPI = RenderAPI::API::OGL4;
 	};
 }
